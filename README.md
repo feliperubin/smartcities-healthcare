@@ -1,6 +1,6 @@
 ## SmartCities HealthCare
 
-![](/Users/felipe/Documents/Faculdade/6o Semestre/Disciplina Integradora 3/smartcities-healthcare/IoTHealth.svg)
+![](assets/IoTHealth.svg)
 
 
 ### Choices

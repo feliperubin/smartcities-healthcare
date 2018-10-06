@@ -26,3 +26,5 @@ Install Python bluez
 conda install -c ericmjl pybluez #Anaconda 3.4
 ```
 
+
+
