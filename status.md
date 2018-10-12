@@ -1,4 +1,17 @@
+## October, 12th 2018
+- Started creating WatchOS app that monitors HeartBeat.
+- Can't deploy it. Seems there's a bug, so I need to reinstall Xcode.
+- So I lost half the day doing:
+  - Reinstall Mojave
+  - Reinstall Xcode
+  - Talk to Apple Support (US)
+  - Debugging
+- The problem is very random and probably OS related. 
+- For now, I need to keep my iPhone charged before plugin it in my Mac. Strange thing is that this problem happens only if the battery is less than ~50%. They were awere of this.
+- I'll call Apple Brasil Tomorow as today is a holiday.
+
 ## October, 9th 2018
+
 - Got the new BLE modules HM10 originals.
 - Asked my Professor to allow me access to IDEIA lab.
 
@@ -7,7 +20,6 @@
 - The BLE modules I've purchese were not original. Their Firmware was Bolutek's which has fewer instructions (AT commands). I'll keep them for the future, but decided to buy the originals.
 - Apparently I can use IDEIA lab if one professor attests for me. Will look into it.
 - I'll change my (non-existent) schedule, first will work on the Raspberry Pi, as it has already an embedded Bluetooth chip.
-- I need to create a schedulle, today was decided there is only 1 month to do this project.
 
 ## October, 4th 2018
 
