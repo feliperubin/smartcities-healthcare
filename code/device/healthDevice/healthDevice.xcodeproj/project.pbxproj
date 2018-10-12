@@ -21,11 +21,8 @@
 		55DE11C3216CD30C005DC7D7 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DE11C2216CD30C005DC7D7 /* NotificationController.swift */; };
 		55DE11C5216CD30C005DC7D7 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DE11C4216CD30C005DC7D7 /* ComplicationController.swift */; };
 		55DE11C7216CD30D005DC7D7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 55DE11C6216CD30D005DC7D7 /* Assets.xcassets */; };
-		55DE11DA216CDA2A005DC7D7 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11D9216CDA2A005DC7D7 /* HealthKit.framework */; };
-		55DE11DC216CDA39005DC7D7 /* HomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11DB216CDA39005DC7D7 /* HomeKit.framework */; };
-		55DE11DE216CDA49005DC7D7 /* ExternalAccessory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11DD216CDA49005DC7D7 /* ExternalAccessory.framework */; };
-		55DE11E1216CDAE4005DC7D7 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11E0216CDAE4005DC7D7 /* HealthKit.framework */; };
-		55DE11E3216CDAE5005DC7D7 /* HomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11E2216CDAE5005DC7D7 /* HomeKit.framework */; };
+		55DE11DA216CDA2A005DC7D7 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11D9216CDA2A005DC7D7 /* HealthKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		55DE11E1216CDAE4005DC7D7 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55DE11E0216CDAE4005DC7D7 /* HealthKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		559474F2217014820022608B /* healthDevice WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "healthDevice WatchKit App.entitlements"; sourceTree = "<group>"; };
 		55DE1198216CD30A005DC7D7 /* healthDevice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = healthDevice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55DE119B216CD30B005DC7D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55DE119D216CD30B005DC7D7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -92,11 +90,8 @@
 		55DE11C9216CD30D005DC7D7 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		55DE11D7216CDA21005DC7D7 /* healthDevice.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = healthDevice.entitlements; sourceTree = "<group>"; };
 		55DE11D9216CDA2A005DC7D7 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		55DE11DB216CDA39005DC7D7 /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
-		55DE11DD216CDA49005DC7D7 /* ExternalAccessory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExternalAccessory.framework; path = System/Library/Frameworks/ExternalAccessory.framework; sourceTree = SDKROOT; };
 		55DE11DF216CDAE4005DC7D7 /* healthDevice WatchKit Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "healthDevice WatchKit Extension.entitlements"; sourceTree = "<group>"; };
 		55DE11E0216CDAE4005DC7D7 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS5.0.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
-		55DE11E2216CDAE5005DC7D7 /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS5.0.sdk/System/Library/Frameworks/HomeKit.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,8 +99,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55DE11DE216CDA49005DC7D7 /* ExternalAccessory.framework in Frameworks */,
-				55DE11DC216CDA39005DC7D7 /* HomeKit.framework in Frameworks */,
 				55DE11DA216CDA2A005DC7D7 /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,7 +107,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55DE11E3216CDAE5005DC7D7 /* HomeKit.framework in Frameworks */,
 				55DE11E1216CDAE4005DC7D7 /* HealthKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -160,6 +152,7 @@
 		55DE11AE216CD30C005DC7D7 /* healthDevice WatchKit App */ = {
 			isa = PBXGroup;
 			children = (
+				559474F2217014820022608B /* healthDevice WatchKit App.entitlements */,
 				55DE11AF216CD30C005DC7D7 /* Interface.storyboard */,
 				55DE11B2216CD30C005DC7D7 /* Assets.xcassets */,
 				55DE11B4216CD30C005DC7D7 /* Info.plist */,
@@ -185,10 +178,7 @@
 		55DE11D8216CDA2A005DC7D7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				55DE11E2216CDAE5005DC7D7 /* HomeKit.framework */,
 				55DE11E0216CDAE4005DC7D7 /* HealthKit.framework */,
-				55DE11DD216CDA49005DC7D7 /* ExternalAccessory.framework */,
-				55DE11DB216CDA39005DC7D7 /* HomeKit.framework */,
 				55DE11D9216CDA2A005DC7D7 /* HealthKit.framework */,
 			);
 			name = Frameworks;
@@ -264,7 +254,7 @@
 						CreatedOnToolsVersion = 10.0;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.DataProtection = {
 								enabled = 0;
@@ -273,27 +263,32 @@
 								enabled = 1;
 							};
 							com.apple.HomeKit = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.WAC = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
 					55DE11A9216CD30C005DC7D7 = {
 						CreatedOnToolsVersion = 10.0;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 0;
+							};
+						};
 					};
 					55DE11B8216CD30C005DC7D7 = {
 						CreatedOnToolsVersion = 10.0;
 						SystemCapabilities = {
 							com.apple.BackgroundModes.watchos.extension = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.HealthKit.watchos = {
 								enabled = 1;
 							};
 							com.apple.HomeKit = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -534,6 +529,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_ENTITLEMENTS = "healthDevice WatchKit Extension/healthDevice WatchKit Extension.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5U5WX6GL2F;
 				INFOPLIST_FILE = "healthDevice WatchKit Extension/Info.plist";
@@ -542,8 +538,9 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Felipe.Pfeifer.Rubin.healthDevice.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rubin.healthDevice.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -557,6 +554,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_ENTITLEMENTS = "healthDevice WatchKit Extension/healthDevice WatchKit Extension.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5U5WX6GL2F;
 				INFOPLIST_FILE = "healthDevice WatchKit Extension/Info.plist";
@@ -565,8 +563,9 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Felipe.Pfeifer.Rubin.healthDevice.watchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rubin.healthDevice.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -580,12 +579,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5U5WX6GL2F;
 				IBSC_MODULE = healthDevice_WatchKit_Extension;
 				INFOPLIST_FILE = "healthDevice WatchKit App/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = Felipe.Pfeifer.Rubin.healthDevice.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rubin.healthDevice.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -599,12 +600,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5U5WX6GL2F;
 				IBSC_MODULE = healthDevice_WatchKit_Extension;
 				INFOPLIST_FILE = "healthDevice WatchKit App/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = Felipe.Pfeifer.Rubin.healthDevice.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rubin.healthDevice.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
@@ -618,6 +621,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = healthDevice/healthDevice.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5U5WX6GL2F;
 				INFOPLIST_FILE = healthDevice/Info.plist;
@@ -625,10 +629,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Felipe.Pfeifer.Rubin.healthDevice;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rubin.healthDevice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -637,6 +642,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = healthDevice/healthDevice.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5U5WX6GL2F;
 				INFOPLIST_FILE = healthDevice/Info.plist;
@@ -644,10 +650,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Felipe.Pfeifer.Rubin.healthDevice;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rubin.healthDevice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

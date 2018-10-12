@@ -7,12 +7,14 @@
 //
 
 import UIKit
-
+import HealthKit
+import WatchConnectivity
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let healthStore = HKHealthStore()
+        
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -41,6 +43,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    /* THIS WORKS ! */
+    func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
+        HKHealthStore().handleAuthorizationForExtension {
+            success, error in
+            if let error = error {
+                print("applicationShouldRequestHealthAuthorization: \n",error,"\n")
+            }
+        }
+    }
+    
+    
+
+//    func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
+//        let authTypes = Set([HKObjectType.workoutType(),
+//                             HKObjectType.quantityType(forIdentifier: .heartRate)!])
+//        healthStore.requestAuthorization(toShare: authTypes,read: authTypes) { (success, error) in
+//            if let error = error {
+//                print("SOMETHING WRONG")
+//                print(error)
+//            }else{
+//                print("Ta")
+//            }
+//
+//        }
+//    }
+//
+//    func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
+//        healthStore.handleAuthorizationForExtension(completion: { (success, error) in
+//            if let error = error {
+//                print("HealthKit not authorized")
+//
+//            }
+//            })
+//    }
 
 }
-

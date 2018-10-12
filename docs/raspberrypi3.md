@@ -1,5 +1,27 @@
 # Installation
 
+sudo sdptool add SP
+
+To do THAT, you need to run the Bluetooth daemon in 'compatibility' mode. Edit /etc/systemd/system/dbus-org.bluez.service and add '-C' after 'bluetoothd'. Reboot.
+
+```bash
+sudo hciconfig hciX name PiBeacon
+
+sudo hciconfig hci0 leadv3
+```
+
+[Addafruit adding ibeacon data](https://learn.adafruit.com/pibeacon-ibeacon-with-a-raspberry-pi/adding-ibeacon-data)
+
+
+
+[Raspberry Pi and Arduino Bluetooth Communication](http://www.uugear.com/portfolio/bluetooth-communication-between-raspberry-pi-and-arduino/)
+
+
+
+
+
+___
+
 
 
 Install Bluetooth requirements with python support
