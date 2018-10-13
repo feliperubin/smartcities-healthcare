@@ -13,12 +13,15 @@
             <objects>
                 <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="healthDevice_WatchKit_App" customModuleProvider="target">
                     <items>
-                        <imageView width="59" height="58" alignment="center" image="heartimg" id="ZiK-4X-2Mn"/>
-                        <label width="40" alignment="center" verticalAlignment="bottom" alpha="0.80000000000000004" text="80" id="EJ2-9f-otq">
+                        <imageView width="62" height="61" alignment="center" image="heartimg" id="ZiK-4X-2Mn"/>
+                        <label alignment="center" verticalAlignment="bottom" alpha="0.75" text="---" textAlignment="center" id="EJ2-9f-otq">
                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <fontDescription key="font" style="UICTFontTextStyleTitle0"/>
                         </label>
                         <button width="1" alignment="center" verticalAlignment="bottom" title="Start" id="r4Y-3u-FQc">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" red="0.095201291143894196" green="0.3085935115814209" blue="0.53278791904449463" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" type="system" pointSize="25"/>
                             <connections>
                                 <action selector="startMonitoringHeartBeat" destination="AgC-eL-Hgc" id="XGw-ou-OTZ"/>
                             </connections>
@@ -26,11 +29,12 @@
                     </items>
                     <connections>
                         <outlet property="heartRateLabel" destination="EJ2-9f-otq" id="dA2-fu-x9W"/>
-                        <outlet property="startButton" destination="r4Y-3u-FQc" id="EYs-Ye-RE6"/>
+                        <outlet property="hearthImage" destination="ZiK-4X-2Mn" id="Xtu-iR-i2j"/>
+                        <outlet property="startButton" destination="r4Y-3u-FQc" id="se0-Mo-zXk"/>
                     </connections>
                 </controller>
             </objects>
-            <point key="canvasLocation" x="219.95061728395061" y="344.74619289340097"/>
+            <point key="canvasLocation" x="219.95061728395061" y="300.73604060913704"/>
         </scene>
         <!--Static Notification Interface Controller-->
         <scene sceneID="AEw-b0-oYE">

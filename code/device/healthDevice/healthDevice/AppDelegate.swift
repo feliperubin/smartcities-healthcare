@@ -7,6 +7,8 @@
 //
 
 import UIKit
+
+
 import HealthKit
 import WatchConnectivity
 @UIApplicationMain
@@ -44,15 +46,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     /* THIS WORKS ! */
+//    func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
+//        HKHealthStore().handleAuthorizationForExtension {
+//            success, error in
+//            if let error = error {
+//                print("applicationShouldRequestHealthAuthorization: \n",error,"\n")
+//            }
+//        }
+//
+//    }
+//
+
     func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {
-        HKHealthStore().handleAuthorizationForExtension {
+        self.healthStore.handleAuthorizationForExtension {
             success, error in
             if let error = error {
                 print("applicationShouldRequestHealthAuthorization: \n",error,"\n")
-            }
+            }   
         }
+        
     }
-    
     
 
 //    func applicationShouldRequestHealthAuthorization(_ application: UIApplication) {

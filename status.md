@@ -1,4 +1,14 @@
+## October, 13th 2018
+- Half way through WatchOS app, I now have access to Heart Beats Per Minute
+
+![assets/heartrate-example.jpg](assets/heartrate-example.jpg)
+
+- Now I need to do the Bluetooth task.
+
+
+
 ## October, 12th 2018
+
 - Started creating WatchOS app that monitors HeartBeat.
 - Can't deploy it. Seems there's a bug, so I need to reinstall Xcode.
 - So I lost half the day doing:
