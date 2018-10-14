@@ -11,21 +11,16 @@ import Foundation
 import HealthKit
 import WatchConnectivity
 /*
+ Some Credits:
  https://github.com/coolioxlr/watchOS-3-heartrate/blob/master/VimoHeartRate%20WatchKit%20App%20Extension/InterfaceController.swift
+ https://www.codingexplorer.com/watch-connectivity-swift-application-context/
  */
 class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSessionDelegate {
     
     var session = WCSession.default
-    
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-            print("WatchOS activationDidCompleteWith")
-    }
-    
-    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
-        print("WatchOS didReceiveApplicationContext")
-        DispatchQueue.main.async {
-            self.processConnectivity()
-        }
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?){}
+    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
+        print("Workout Session Failed")
     }
 
     
@@ -35,24 +30,12 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
     let healthStore = HKHealthStore() //The healthstore
     let workoutConfiguration = HKWorkoutConfiguration()
     var wkenabled = false; //Is workout enabled
-    var wksession : HKWorkoutSession?
-    var heartRateQuery: HKAnchoredObjectQuery?
-
-
-    private func processConnectivity() {
-        if let iosContext = session.receivedApplicationContext as? [String : Bool] {
-            if iosContext["wkenabled"] == true {
-                print("WatchOS received",true)
-            }else{
-                print("WatchOS received",false)
-            }
-        }
-    }
+    var wksession : HKWorkoutSession? //Workout Session
+    var heartRateQuery: HKAnchoredObjectQuery? //Query to acquire the Heart Rate
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         // Configure interface objects here.
-        processConnectivity()
         session.delegate = self
         session.activate()
     }
@@ -63,7 +46,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
         
         guard HKHealthStore.isHealthDataAvailable() else {
             heartRateLabel.setText("Not Available")
-            //print("WHY NOT")
             return
         }
         let authTypes = Set([HKObjectType.workoutType(),HKObjectType.quantityType(forIdentifier: .heartRate)!])
@@ -98,9 +80,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
             print("This Shouldn't Happen, workoutSession");
         }
     }
-    func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
-        print("Workout Session Failed")
-    }
     private func stopMonitoringHeartBeat() {
         print("Stopped monitoring")
         heartRateLabel.setText("---")
@@ -114,7 +93,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
             return
         }
         let queryPredicate = HKQuery.predicateForSamples(withStart: Date(), end: nil, options: [])
-        
         heartRateQuery = HKAnchoredObjectQuery(type: heartRateType, predicate: queryPredicate, anchor: nil, limit: Int(HKObjectQueryNoLimit)){
             [unowned self] (_,samples,_,_,error) in
             if let receivedError = error {
@@ -124,7 +102,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
                 self.updateHeartBeat(withSamples: samples)
             }
         }
-        
         heartRateQuery!.updateHandler = { [unowned self] (_,samples,_,_,error) -> Void in
             if let receivedError = error {
                 completition(receivedError)
@@ -146,13 +123,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
             startWorkout()
         }
         self.wkenabled = !self.wkenabled
-        
-        do {
-            try session.updateApplicationContext(["wkenabled":wkenabled])
-            print("WatchOS Updated")
-        } catch {
-            print("WatchOS Can't update")
-        }
     }
     
     private func startWorkout() {
@@ -179,10 +149,19 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
                 return
             }
         let hbvalue = firstSample.quantity.doubleValue(for: HKUnit.init(from: "count/min"))
+        //
+        do {
+            try self.session.updateApplicationContext(["hr":String(UInt16(hbvalue))])
+            print("WatchOS Updated")
+        } catch {
+            print("WatchOS Can't update")
+        }
+        //
         self.heartRateLabel.setText(String(UInt16(hbvalue)))
         self.animateHeart()
         }
     }
+    
     //70x65
     private func animateHeart() {
         self.animate(withDuration: 0.3, animations: {
