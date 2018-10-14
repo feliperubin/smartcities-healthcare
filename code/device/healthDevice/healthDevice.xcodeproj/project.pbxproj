@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		55126DEC2173C8BA00BC78CF /* BluetoothUUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A51C0C2172786F00920472 /* BluetoothUUID.swift */; };
+		55126DED2173C8BC00BC78CF /* BlueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A51C0A217276D000920472 /* BlueManager.swift */; };
 		55DE119C216CD30B005DC7D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DE119B216CD30B005DC7D7 /* AppDelegate.swift */; };
 		55DE119E216CD30B005DC7D7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DE119D216CD30B005DC7D7 /* ViewController.swift */; };
 		55DE11A1216CD30B005DC7D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55DE119F216CD30B005DC7D7 /* Main.storyboard */; };
@@ -69,6 +71,8 @@
 
 /* Begin PBXFileReference section */
 		559474F2217014820022608B /* healthDevice WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "healthDevice WatchKit App.entitlements"; sourceTree = "<group>"; };
+		55A51C0A217276D000920472 /* BlueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueManager.swift; sourceTree = "<group>"; };
+		55A51C0C2172786F00920472 /* BluetoothUUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothUUID.swift; sourceTree = "<group>"; };
 		55DE1198216CD30A005DC7D7 /* healthDevice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = healthDevice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55DE119B216CD30B005DC7D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		55DE119D216CD30B005DC7D7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 		55DE119A216CD30A005DC7D7 /* healthDevice */ = {
 			isa = PBXGroup;
 			children = (
+				55A51C0C2172786F00920472 /* BluetoothUUID.swift */,
+				55A51C0A217276D000920472 /* BlueManager.swift */,
 				55DE11D7216CDA21005DC7D7 /* healthDevice.entitlements */,
 				55DE119B216CD30B005DC7D7 /* AppDelegate.swift */,
 				55DE119D216CD30B005DC7D7 /* ViewController.swift */,
@@ -350,7 +356,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				55DE119E216CD30B005DC7D7 /* ViewController.swift in Sources */,
+				55126DEC2173C8BA00BC78CF /* BluetoothUUID.swift in Sources */,
 				55DE119C216CD30B005DC7D7 /* AppDelegate.swift in Sources */,
+				55126DED2173C8BC00BC78CF /* BlueManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
