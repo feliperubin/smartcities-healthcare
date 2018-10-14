@@ -14,8 +14,8 @@ import WatchConnectivity
  https://github.com/coolioxlr/watchOS-3-heartrate/blob/master/VimoHeartRate%20WatchKit%20App%20Extension/InterfaceController.swift
  */
 class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSessionDelegate {
-    var session = WCSession.default
     
+    var session = WCSession.default
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
             print("WatchOS activationDidCompleteWith")
@@ -47,16 +47,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
                 print("WatchOS received",false)
             }
         }
-//        if session?.activationState == .activated {
-//            do {
-//                try session?.updateApplicationContext(["wkenabled": wkenabled])
-//            } catch {
-//                print("WatchOS processConnectivity FAILED TO SEND")
-//            }
-//            print("WatchOS processConnectivity wkenabled:",wkenabled)
-//        } else {
-//          print("WatchOS processConnectivity NOT ACTIVATED")
-//        }
     }
     
     override func awake(withContext context: Any?) {
@@ -76,20 +66,21 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
             //print("WHY NOT")
             return
         }
-        //print("HEART RATE AVAILABLE")
         let authTypes = Set([HKObjectType.workoutType(),HKObjectType.quantityType(forIdentifier: .heartRate)!])
         healthStore.requestAuthorization(toShare: authTypes, read: authTypes) {(success, error) in
             if let error = error {
                 print(error)
                 self.heartRateLabel.setText("Not authorized")
-                //print("Request Authorization Failed")
                 return
-            }else{
-                //print("SUCCESS")
             }
         }
     }
 
+    override func didDeactivate() {
+        // This method is called when watch view controller is no longer visible
+        super.didDeactivate()
+    }
+    
     func workoutSession(_ workoutSession: HKWorkoutSession, didChangeTo toState: HKWorkoutSessionState, from fromState: HKWorkoutSessionState, date: Date) {
         switch toState {
         case.running:
@@ -156,14 +147,12 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
         }
         self.wkenabled = !self.wkenabled
         
-        processConnectivity()
-        
-//        let iosContext = ["wkenabled": wkenabled]
-//        do {
-//            try session.updateApplicationContext(iosContext)
-//        } catch {
-//            print("Something went wrong")
-//        }
+        do {
+            try session.updateApplicationContext(["wkenabled":wkenabled])
+            print("WatchOS Updated")
+        } catch {
+            print("WatchOS Can't update")
+        }
     }
     
     private func startWorkout() {
@@ -214,10 +203,6 @@ class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSess
 
     }
 
-    override func didDeactivate() {
-        // This method is called when watch view controller is no longer visible
-        super.didDeactivate()
-    }
     
 
 }

@@ -20,19 +20,34 @@ class ViewController: UIViewController, WCSessionDelegate {
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         print("iOS didReceiveApplicationContext")
+        //
+        DispatchQueue.main.async {
+            self.processConnectivity()
+        }
+        //
     }
     
    func processConnectivity() {
-        print("iOS Connectivity Assync")
-        if let watchosContext = self.session?.applicationContext as? [String: Bool] {
-            if watchosContext["wkenabled"] == true{
-                print("iPhone Got ",true)
-                self.heartRateLabel.text = "YES"
-            } else {
-                print("iPhone Got ",false)
-                self.heartRateLabel.text = "NO"
+//        print("iOS Connectivity Async")
+//        if let watchosContext = self.session?.applicationContext as? [String: Bool] {
+//            if watchosContext["wkenabled"] == true{
+//                print("iPhone Got ",true)
+//                self.heartRateLabel.text = "YES"
+//            } else {
+//                print("iPhone Got ",false)
+//                self.heartRateLabel.text = "NO"
+//            }
+//        }
+            print("iOS Connectivity Async")
+            if let watchosContext = self.session?.receivedApplicationContext as? [String: Bool] {
+                if watchosContext["wkenabled"] == true{
+                    print("iPhone Got ",true)
+                    self.heartRateLabel.text = "YES"
+                } else {
+                    print("iPhone Got ",false)
+                    self.heartRateLabel.text = "NO"
+                }
             }
-        }
     }
 
     @IBOutlet weak var startButton: UIButton!
