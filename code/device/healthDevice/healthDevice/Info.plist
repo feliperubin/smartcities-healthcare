@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Hi, I need again more and more of your information.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>More information is required to ensure a quality service, do you accept ?</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Please, allow us to know where you are whenever we want ?</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Hello, again I need more permissions apparently 5 requests aren&apos;t enought.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -24,6 +32,11 @@
 	<string>Dear user, allow us to collect your data and sell it ?</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Dear user again, we need your confirmation, this should be enought, right ?</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-peripheral</string>
+		<string>external-accessory</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

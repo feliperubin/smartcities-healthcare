@@ -142,8 +142,6 @@
 		55DE119A216CD30A005DC7D7 /* healthDevice */ = {
 			isa = PBXGroup;
 			children = (
-				55A51C0C2172786F00920472 /* BluetoothUUID.swift */,
-				55A51C0A217276D000920472 /* BlueManager.swift */,
 				55DE11D7216CDA21005DC7D7 /* healthDevice.entitlements */,
 				55DE119B216CD30B005DC7D7 /* AppDelegate.swift */,
 				55DE119D216CD30B005DC7D7 /* ViewController.swift */,
@@ -151,6 +149,8 @@
 				55DE11A2216CD30C005DC7D7 /* Assets.xcassets */,
 				55DE11A4216CD30C005DC7D7 /* LaunchScreen.storyboard */,
 				55DE11A7216CD30C005DC7D7 /* Info.plist */,
+				55A51C0A217276D000920472 /* BlueManager.swift */,
+				55A51C0C2172786F00920472 /* BluetoothUUID.swift */,
 			);
 			path = healthDevice;
 			sourceTree = "<group>";
@@ -260,7 +260,7 @@
 						CreatedOnToolsVersion = 10.0;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.DataProtection = {
 								enabled = 0;
