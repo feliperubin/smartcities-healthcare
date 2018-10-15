@@ -36,32 +36,44 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     
     let locationManager = CLLocationManager()
     var localBeacon: CLBeaconRegion!
+    var localBeacon2: CLBeaconRegion!
     var beaconPeripheralData: NSDictionary!
+    var beaconPeripheralData2: NSDictionary!
     var peripheralManager: CBPeripheralManager!
     private func initLocalBeacon() {
-        if localBeacon != nil {
-            stopLocalBeacon()
-        }
         let localBeaconUUID = "6486A0F0-BBA6-4937-9079-3E0344CC98EE"
-        let localBeaconMinor: CLBeaconMinorValue = 456
-        let localBeaconMajor: CLBeaconMajorValue = 123
+        let localBeaconMinor: CLBeaconMinorValue = 1
+        let localBeaconMajor: CLBeaconMajorValue = 100
         let uuid = UUID(uuidString: localBeaconUUID)!
-        let localBeaconID = "TestBeacon"
+        let localBeaconID = "com.example.myDeviceRegion"
         localBeacon = CLBeaconRegion(proximityUUID: uuid, major: localBeaconMajor, minor: localBeaconMinor, identifier: localBeaconID)
         beaconPeripheralData = localBeacon.peripheralData(withMeasuredPower: nil)
         peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
     }
-    private func stopLocalBeacon() {
+    private func initLocalBeacon2() {
+        let localBeaconUUID = "6586A0F0-BBA6-4937-9079-3E0344CC98EE"
+        let localBeaconMinor: CLBeaconMinorValue = 1
+        let localBeaconMajor: CLBeaconMajorValue = 100
+        let uuid = UUID(uuidString: localBeaconUUID)!
+        let localBeaconID = "com.example.myDeviceRegion"
+        localBeacon2 = CLBeaconRegion(proximityUUID: uuid, major: localBeaconMajor, minor: localBeaconMinor, identifier: localBeaconID)
+        beaconPeripheralData2 = localBeacon.peripheralData(withMeasuredPower: nil)
+//        peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
+    }
+    private func startAdvertising() {
+        peripheralManager.startAdvertising((beaconPeripheralData as NSDictionary) as! [String: Any])
+        peripheralManager.startAdvertising((beaconPeripheralData2 as NSDictionary) as! [String: Any])
+    }
+    private func stopAdvertising() {
         peripheralManager.stopAdvertising()
-        peripheralManager = nil
-        beaconPeripheralData = nil
-        localBeacon = nil
     }
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn {
-            peripheralManager.startAdvertising(beaconPeripheralData as! [String: AnyObject])
+            print("Powered On")
         } else if peripheral.state == .poweredOff {
-            peripheralManager.stopAdvertising()
+            print("Powered Off")
+        }else {
+            print("Unhandled state")
         }
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,14 +91,19 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         }
         //Required for Beacon
         locationManager.requestAlwaysAuthorization()
-
-    //        advertiseBeacon(region: createBeaconRegion()!)
         initLocalBeacon()
+        initLocalBeacon2()
         
     }
     
     @IBAction func startButtonAction(_ sender: Any) {
-
+        if peripheralManager.isAdvertising {
+            stopAdvertising()
+            print("Stopped Advertising")
+        }else {
+            startAdvertising()
+            print("Started Advertising")
+        }
     }
     
 

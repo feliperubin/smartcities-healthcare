@@ -1,3 +1,13 @@
+## October, 14th 2018
+- Discovered that just the iWatch can't work as a Beacon device. I need to pass the data to the  iOS application and then it will broadcast it.
+- Created iOS Application that has a shared variable with the iWatch. It's the current heartRate.
+- Apparently apple has 2 Frameworks: CoreLocation and CoreBluetooth.
+  - CoreLocation: iBeacon Related
+  - CoreBluetooth: GATT BLE 4.0 Related
+- I've implemented the iBeacon stack, but I actually need the GATT.
+
+
+
 ## October, 13th 2018
 - Half way through WatchOS app, I now have access to Heart Beats Per Minute
 
