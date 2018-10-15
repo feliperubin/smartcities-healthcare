@@ -6,11 +6,12 @@
 //  Copyright © 2018 Felipe Pfeifer Rubin. All rights reserved.
 //
 
-import Foundation
-import CoreLocation
-class BeaconManager: NSObject, CBPeripheralManagerDelegate {
-    private
-    override func init() {
-        
-    }
-}
+//import Foundation
+//import CoreLocation
+//import CoreBluetooth
+//class BeaconManager: NSObject, CBPeripheralManagerDelegate {
+//    private
+//    override func init() {
+//        
+//    }
+//}

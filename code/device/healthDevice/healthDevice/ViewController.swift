@@ -15,9 +15,10 @@ import CoreLocation
 import CoreBluetooth
 /*
  https://www.hackingwithswift.com/example-code/location/how-to-make-an-iphone-transmit-an-ibeacon
+ https://cdn-learn.adafruit.com/downloads/pdf/crack-the-code.pdf
 */
 class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDelegate {
-    
+
     /////////////////////////////WATCH/////CONNECTIVITY/////////////////////////////////////////////
     var session: WCSession?
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?){}
@@ -30,16 +31,53 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         print("iOS Connectivity Async")
         if let watchosContext = self.session?.receivedApplicationContext as? [String: String] {
             self.heartRateLabel.text = watchosContext["hr"]
+            /*
+             Add Here:
+             if Bluetooth is on, notify about the changes
+             */
+//            if peripheralManager.isAdvertising {
+//                
+//            }
+            //        peripheralManager.updateValue("1337".toData(), for: <#T##CBMutableCharacteristic#>, onSubscribedCentrals: nil)
         }
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////
     
     let locationManager = CLLocationManager()
     var localBeacon: CLBeaconRegion!
-    var localBeacon2: CLBeaconRegion!
     var beaconPeripheralData: NSDictionary!
-    var beaconPeripheralData2: NSDictionary!
     var peripheralManager: CBPeripheralManager!
+    var centralManager: CBCentralManager!
+    var timer = Timer()
+//    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+//        if central.state == CBManagerState.poweredOn {
+//            print("Bluetooth Enabled")
+////            startBLEScan()
+//        } else {
+//            print("Bluetooth Disabled")
+//            let alertVC = UIAlertController(title: "Bluetooth is OFF", message: "Please enable bluetooth", preferredStyle: .alert)
+//            let action = UIAlertAction(title: "ok", style: .default, handler: nil)
+//            alertVC.addAction(action)
+//            self.present(alertVC, animated: true, completion: nil)
+//        }
+//    }
+
+    func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
+//        peripheralManager.updateValue("1337".toData(), for: <#T##CBMutableCharacteristic#>, onSubscribedCentrals: nil)
+        print("WOAH, SOMEONE SUBSCRIBED!")
+        
+    }
+    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
+        let currentHeartRate = self.heartRateLabel.text!
+        request.value = currentHeartRate.data(using: .utf8)
+        peripheralManager.respond(to: request, withResult: .success)
+        print("Someone asked")
+    }
+    func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
+        //
+        print("Manager Start Advert")
+    }
+    
     private func initLocalBeacon() {
         let localBeaconUUID = "6486A0F0-BBA6-4937-9079-3E0344CC98EE"
         let localBeaconMinor: CLBeaconMinorValue = 1
@@ -50,19 +88,37 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         beaconPeripheralData = localBeacon.peripheralData(withMeasuredPower: nil)
         peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
     }
-    private func initLocalBeacon2() {
-        let localBeaconUUID = "6586A0F0-BBA6-4937-9079-3E0344CC98EE"
-        let localBeaconMinor: CLBeaconMinorValue = 1
-        let localBeaconMajor: CLBeaconMajorValue = 100
-        let uuid = UUID(uuidString: localBeaconUUID)!
-        let localBeaconID = "com.example.myDeviceRegion"
-        localBeacon2 = CLBeaconRegion(proximityUUID: uuid, major: localBeaconMajor, minor: localBeaconMinor, identifier: localBeaconID)
-        beaconPeripheralData2 = localBeacon.peripheralData(withMeasuredPower: nil)
-//        peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
+    private func configBLEServices() {
+        /* GATT
+         Char: Heart Rate Measurement; org.bluetooth.characteristic.heart_rate_measurement; 0x2A37
+         Service: Heart Rate    org.bluetooth.service.heart_rate    0x180D    GSS
+         */
+        let hrMeasureCharUUID = CBUUID(string: "2A37")
+//        let hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID, properties: [.read,.notify], value: "V".data(using: .utf8), permissions: [.readable])
+        /*
+         Really Important NOTE:
+         Initialize the characteristic value with NIL,
+         otherwise it'll be a cachedvalue and can't be changed.
+         Also, it won't show up for scan for some reason ?
+         */
+         let hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID, properties: [.read,.notify], value: nil, permissions: [.readable])
+//        CBMutableDescriptor(type: <#T##CBUUID#>, value: <#T##Any?#>)
+        
+        let hrServiceUUID = CBUUID(string: "180D")
+        let hrService = CBMutableService(type: hrServiceUUID, primary: true)
+        hrService.characteristics = [hrmChar]
+        peripheralManager.add(hrService)
+        
+        
+        peripheralManager.startAdvertising([
+            CBAdvertisementDataLocalNameKey: "healthDevice",
+            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID]
+            ])
+        
     }
     private func startAdvertising() {
-        peripheralManager.startAdvertising((beaconPeripheralData as NSDictionary) as! [String: Any])
-        peripheralManager.startAdvertising((beaconPeripheralData2 as NSDictionary) as! [String: Any])
+        //peripheralManager.startAdvertising((beaconPeripheralData as NSDictionary) as! [String: Any])
+        configBLEServices()
     }
     private func stopAdvertising() {
         peripheralManager.stopAdvertising()
@@ -91,8 +147,10 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         }
         //Required for Beacon
         locationManager.requestAlwaysAuthorization()
+        
+//        centralManager = CBCentralManager(delegate: self, queue: nil)
         initLocalBeacon()
-        initLocalBeacon2()
+        configBLEServices()
         
     }
     
@@ -104,6 +162,11 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             startAdvertising()
             print("Started Advertising")
         }
+    }
+    
+    
+    @IBAction func testUpdateAction(_ sender: Any) {
+        
     }
     
 
