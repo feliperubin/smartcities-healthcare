@@ -27,18 +27,18 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         DispatchQueue.main.async {self.processConnectivity()}
     }
+    private func updateHeartRateLabel(newhr: String) {
+        self.heartRateLabel.text = newhr
+        if peripheralManager.isAdvertising {
+            peripheralManager.updateValue(self.heartRateLabel.text!.data(using: .utf8)!, for: hrmChar!, onSubscribedCentrals: nil)
+        }
+    }
    func processConnectivity() {
         print("iOS Connectivity Async")
         if let watchosContext = self.session?.receivedApplicationContext as? [String: String] {
-            self.heartRateLabel.text = watchosContext["hr"]
-            /*
-             Add Here:
-             if Bluetooth is on, notify about the changes
-             */
-//            if peripheralManager.isAdvertising {
-//                
-//            }
-            //        peripheralManager.updateValue("1337".toData(), for: <#T##CBMutableCharacteristic#>, onSubscribedCentrals: nil)
+            if !isSimulating {
+                updateHeartRateLabel(newhr: watchosContext["hr"]!)
+            }
         }
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,81 +47,82 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     var localBeacon: CLBeaconRegion!
     var beaconPeripheralData: NSDictionary!
     var peripheralManager: CBPeripheralManager!
-    var centralManager: CBCentralManager!
-    var timer = Timer()
-//    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-//        if central.state == CBManagerState.poweredOn {
-//            print("Bluetooth Enabled")
-////            startBLEScan()
-//        } else {
-//            print("Bluetooth Disabled")
-//            let alertVC = UIAlertController(title: "Bluetooth is OFF", message: "Please enable bluetooth", preferredStyle: .alert)
-//            let action = UIAlertAction(title: "ok", style: .default, handler: nil)
-//            alertVC.addAction(action)
-//            self.present(alertVC, animated: true, completion: nil)
-//        }
-//    }
-
-    func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
-//        peripheralManager.updateValue("1337".toData(), for: <#T##CBMutableCharacteristic#>, onSubscribedCentrals: nil)
-        print("WOAH, SOMEONE SUBSCRIBED!")
+    //HeartRate GATT Profile
+    var hrMeasureCharUUID: CBUUID?
+    var hrmChar: CBMutableCharacteristic?
+    var isSimulating = false
+    @IBOutlet weak var serviceStatusLabel: UILabel!
+    
+    @IBOutlet weak var heartRateSimulationSlider: UISlider!
+    
+    @IBAction func enableSimulatedHeartRate(_ sender: UIButton) {
+        isSimulating = !isSimulating
+        if isSimulating{
+            sender.setTitle("Disable Simulation", for: .normal)
+        }else {
+            sender.setTitle("Enable Simulation", for: .normal)
+            updateHeartRateLabel(newhr: String(Int(heartRateSimulationSlider.value.rounded(.toNearestOrEven))))
+        }
         
+    }
+    
+    @IBAction func simulateHeartRateUpdate(_ sender: UISlider) {
+        updateHeartRateLabel(newhr: String(Int(sender.value.rounded(.toNearestOrEven))))
+    }
+    
+    private func warnBluetoothOff() {
+        let alertVC = UIAlertController(title: "Bluetooth is OFF", message: "Please enable bluetooth", preferredStyle: .alert)
+        let action = UIAlertAction(title: "ok", style: .default, handler: nil)
+        alertVC.addAction(action)
+        self.present(alertVC, animated: true, completion: nil)
+    }
+    
+    func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
+        print("Someone Subscribed")
     }
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
         let currentHeartRate = self.heartRateLabel.text!
-        request.value = currentHeartRate.data(using: .utf8)
-        peripheralManager.respond(to: request, withResult: .success)
+        
+        if request.characteristic == hrmChar {
+            request.value = currentHeartRate.data(using: .utf8)
+            peripheralManager.respond(to: request, withResult: .success)
+        }
         print("Someone asked")
     }
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         //
         print("Manager Start Advert")
     }
-    
-    private func initLocalBeacon() {
-        let localBeaconUUID = "6486A0F0-BBA6-4937-9079-3E0344CC98EE"
-        let localBeaconMinor: CLBeaconMinorValue = 1
-        let localBeaconMajor: CLBeaconMajorValue = 100
-        let uuid = UUID(uuidString: localBeaconUUID)!
-        let localBeaconID = "com.example.myDeviceRegion"
-        localBeacon = CLBeaconRegion(proximityUUID: uuid, major: localBeaconMajor, minor: localBeaconMinor, identifier: localBeaconID)
-        beaconPeripheralData = localBeacon.peripheralData(withMeasuredPower: nil)
+
+    private func initPeripheral() {
         peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
     }
-    private func configBLEServices() {
-        /* GATT
-         Char: Heart Rate Measurement; org.bluetooth.characteristic.heart_rate_measurement; 0x2A37
-         Service: Heart Rate    org.bluetooth.service.heart_rate    0x180D    GSS
-         */
-        let hrMeasureCharUUID = CBUUID(string: "2A37")
-//        let hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID, properties: [.read,.notify], value: "V".data(using: .utf8), permissions: [.readable])
+    private func startAdvertising() {
+        
+
         /*
          Really Important NOTE:
          Initialize the characteristic value with NIL,
          otherwise it'll be a cachedvalue and can't be changed.
          Also, it won't show up for scan for some reason ?
          */
-         let hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID, properties: [.read,.notify], value: nil, permissions: [.readable])
-//        CBMutableDescriptor(type: <#T##CBUUID#>, value: <#T##Any?#>)
-        
+        hrMeasureCharUUID = CBUUID(string: "2A37")
+         hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
         let hrServiceUUID = CBUUID(string: "180D")
         let hrService = CBMutableService(type: hrServiceUUID, primary: true)
-        hrService.characteristics = [hrmChar]
+        hrService.characteristics = [hrmChar!]
         peripheralManager.add(hrService)
         
-        
+        //peripheralManager.startAdvertising((beaconPeripheralData as NSDictionary) as! [String: Any])
         peripheralManager.startAdvertising([
             CBAdvertisementDataLocalNameKey: "healthDevice",
             CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID]
             ])
         
     }
-    private func startAdvertising() {
-        //peripheralManager.startAdvertising((beaconPeripheralData as NSDictionary) as! [String: Any])
-        configBLEServices()
-    }
     private func stopAdvertising() {
         peripheralManager.stopAdvertising()
+        heartRateLabel.text = "---"
     }
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         if peripheral.state == .poweredOn {
@@ -147,10 +148,9 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         }
         //Required for Beacon
         locationManager.requestAlwaysAuthorization()
-        
-//        centralManager = CBCentralManager(delegate: self, queue: nil)
-        initLocalBeacon()
-        configBLEServices()
+//        initLocalBeacon()
+//        configBLEServices()
+        initPeripheral()
         
     }
     
@@ -158,16 +158,15 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         if peripheralManager.isAdvertising {
             stopAdvertising()
             print("Stopped Advertising")
+            self.serviceStatusLabel.text = "OFF"
         }else {
             startAdvertising()
             print("Started Advertising")
+            self.serviceStatusLabel.text = "ON"
         }
     }
     
-    
-    @IBAction func testUpdateAction(_ sender: Any) {
-        
-    }
+
     
 
 }
