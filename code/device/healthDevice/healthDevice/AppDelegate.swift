@@ -6,6 +6,11 @@
 //  Copyright © 2018 Felipe Pfeifer Rubin. All rights reserved.
 //
 
+/*
+ Icons Credits:
+ https://www.flaticon.com/free-icon/blueetooth-logo_61089#term=bluetooth&page=1&position=6
+ https://www.flaticon.com/free-icon/cardiogram_249205#term=heart%20rate&page=1&position=23
+*/
 import UIKit
 
 
