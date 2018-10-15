@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		552E256C2174FD2E008CA1A0 /* BlueSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552E256B2174FD2E008CA1A0 /* BlueSpec.swift */; };
 		55DE119C216CD30B005DC7D7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DE119B216CD30B005DC7D7 /* AppDelegate.swift */; };
 		55DE119E216CD30B005DC7D7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DE119D216CD30B005DC7D7 /* ViewController.swift */; };
 		55DE11A1216CD30B005DC7D7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 55DE119F216CD30B005DC7D7 /* Main.storyboard */; };
@@ -69,7 +68,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		552E256B2174FD2E008CA1A0 /* BlueSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueSpec.swift; sourceTree = "<group>"; };
 		559474F2217014820022608B /* healthDevice WatchKit App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "healthDevice WatchKit App.entitlements"; sourceTree = "<group>"; };
 		55DE1198216CD30A005DC7D7 /* healthDevice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = healthDevice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		55DE119B216CD30B005DC7D7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -147,7 +145,6 @@
 				55DE11A2216CD30C005DC7D7 /* Assets.xcassets */,
 				55DE11A4216CD30C005DC7D7 /* LaunchScreen.storyboard */,
 				55DE11A7216CD30C005DC7D7 /* Info.plist */,
-				552E256B2174FD2E008CA1A0 /* BlueSpec.swift */,
 			);
 			path = healthDevice;
 			sourceTree = "<group>";
@@ -352,7 +349,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				552E256C2174FD2E008CA1A0 /* BlueSpec.swift in Sources */,
 				55DE119E216CD30B005DC7D7 /* ViewController.swift in Sources */,
 				55DE119C216CD30B005DC7D7 /* AppDelegate.swift in Sources */,
 			);

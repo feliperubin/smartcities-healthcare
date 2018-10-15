@@ -50,8 +50,10 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     //HeartRate GATT Profile
     var hrMeasureCharUUID: CBUUID?
     var hrmChar: CBMutableCharacteristic?
+    var hrServiceUUID: CBUUID?
+    var hrService: CBMutableService?
     var isSimulating = false
-    @IBOutlet weak var serviceStatusLabel: UILabel!
+//    @IBOutlet weak var serviceStatusLabel: UILabel!
     
     @IBOutlet weak var heartRateSimulationSlider: UISlider!
     
@@ -96,31 +98,34 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
 
     private func initPeripheral() {
         peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
-    }
-    private func startAdvertising() {
+        createHRMservice()
         
-
+    }
+    
+    private func createHRMservice() {
         /*
          Really Important NOTE:
          Initialize the characteristic value with NIL,
          otherwise it'll be a cachedvalue and can't be changed.
          Also, it won't show up for scan for some reason ?
          */
-        hrMeasureCharUUID = CBUUID(string: "2A37")
-         hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
-        let hrServiceUUID = CBUUID(string: "180D")
-        let hrService = CBMutableService(type: hrServiceUUID, primary: true)
-        hrService.characteristics = [hrmChar!]
-        peripheralManager.add(hrService)
-        
-        //peripheralManager.startAdvertising((beaconPeripheralData as NSDictionary) as! [String: Any])
-        peripheralManager.startAdvertising([
-            CBAdvertisementDataLocalNameKey: "healthDevice",
-            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID]
-            ])
+        self.hrMeasureCharUUID = CBUUID(string: "2A37")
+        self.hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
+        self.hrServiceUUID = CBUUID(string: "180D")
+        self.hrService = CBMutableService(type: hrServiceUUID!, primary: true)
+        self.hrService!.characteristics = [hrmChar!]
+//        self.peripheralManager.add(hrService!)
         
     }
+    private func startAdvertising() {
+        peripheralManager.add(hrService!)
+        peripheralManager.startAdvertising([
+            CBAdvertisementDataLocalNameKey: "healthDevice",
+            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!]
+            ])
+    }
     private func stopAdvertising() {
+        self.peripheralManager.removeAllServices()
         peripheralManager.stopAdvertising()
         heartRateLabel.text = "---"
     }
@@ -148,21 +153,18 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         }
         //Required for Beacon
         locationManager.requestAlwaysAuthorization()
-//        initLocalBeacon()
-//        configBLEServices()
         initPeripheral()
-        
     }
     
-    @IBAction func startButtonAction(_ sender: Any) {
+    @IBAction func startButtonAction(_ sender: UIButton) {
         if peripheralManager.isAdvertising {
             stopAdvertising()
             print("Stopped Advertising")
-            self.serviceStatusLabel.text = "OFF"
+            sender.setTitle("Start Service", for: .normal)
         }else {
             startAdvertising()
             print("Started Advertising")
-            self.serviceStatusLabel.text = "ON"
+            sender.setTitle("Stop Service", for: .normal)
         }
     }
     
