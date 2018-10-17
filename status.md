@@ -1,4 +1,15 @@
+## October, 17th 2018
+
+- Done with the health device application
+
+<img src="assets/ioslogo.svg" alt="drawing" width="100"/><img src="assets/watchoslogo.svg" alt="drawing" width="100"/>
+
+- Connected PiCamera on the Raspberry Pi
+- Will Start the server application while also doing the schematics for the bluetooth component soldering
+
+
 ## October, 14th 2018
+
 - Discovered that just the iWatch can't work as a Beacon device. I need to pass the data to the  iOS application and then it will broadcast it.
 - Created iOS Application that has a shared variable with the iWatch. It's the current heartRate.
 - Apparently apple has 2 Frameworks: CoreLocation and CoreBluetooth.
