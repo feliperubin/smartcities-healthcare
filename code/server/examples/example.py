@@ -1,4 +1,8 @@
 # From https://stackoverflow.com/questions/11140163/python-matplotlib-plotting-a-3d-cube-a-sphere-and-a-vector
+import _thread
+
+
+
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,7 +27,11 @@ z = np.cos(v)
 ax.plot_wireframe(x, y, z, color="r")
 
 # draw a point
-ax.scatter([0], [0], [0], color="g", s=100)
+sct = ax.scatter([0], [0], [0], color="g", s=100)
+sct.remove()
+
+# xy = ax.delete(sct.get_offsets(), s=100)
+
 
 # draw a vector
 from matplotlib.patches import FancyArrowPatch
@@ -42,8 +50,26 @@ class Arrow3D(FancyArrowPatch):
         self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
         FancyArrowPatch.draw(self, renderer)
 
-a = Arrow3D([0, 1], [0, 1], [0, 1], mutation_scale=20,
-            lw=1, arrowstyle="-|>", color="k")
-ax.add_artist(a)
-plt.show()
+# a = Arrow3D([0, 1], [0, 1], [0, 1], mutation_scale=20,
+            # lw=1, arrowstyle="-|>", color="k")
+# ax.add_artist(a)
 
+
+
+# thread.start_new_thread ( function, args[, kwargs] )
+def keepUpdating(ax,scxt):
+    i = 10;
+    while(i < 100):
+        # Read the data
+        # Remove the previous with sct.remove()
+        # Insert the new with sct = ax.scatter([x],[y],[z],color="g",s=100)
+
+        
+        sct = ax.scatter([0][0][0],color="g",s=100)
+        print("Ok")
+        i+=10
+        sct.remove()
+
+
+_thread.start_new_thread(keepUpdating,(ax,""))
+plt.show()

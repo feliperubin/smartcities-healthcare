@@ -1,3 +1,6 @@
+## October, 19th 2018
+- This seems interesting: [Mesh Network HM10 and RPi](https://engineersportal.com/blog/2017/1/9/using-raspberry-pi-hm-10-and-bluepy-to-develop-an-ibeacon-mesh-network-part-2)
+
 ## October, 17th 2018
 
 - Done with the health device application
@@ -6,6 +9,7 @@
 
 - Connected PiCamera on the Raspberry Pi
 - Will Start the server application while also doing the schematics for the bluetooth component soldering
+- Resistor_{value} = (V_{supply} - V_{F})/I_{F} = Ohms
 
 
 ## October, 14th 2018
