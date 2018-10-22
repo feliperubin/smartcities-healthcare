@@ -3,10 +3,12 @@
 
 **Configuration for the Beacons**
 
-```c
+```assembly
 # Indoor Positioning Service
-characteristic 	= 0x2AAD
-service			= 0x1821
+# characteristic 	= 0x2AAD
+# service			= 0x1821
+AT+CHAR0x2AAD
+AT+UUID0x1821
 ```
 
 ## October, 20th 2018
