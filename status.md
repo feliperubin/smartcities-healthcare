@@ -1,9 +1,20 @@
+## October, 21st 2018
+- Based on the Bluetooth 4.0 SPEC [[Link]](https://www.bluetooth.com/specifications/gatt)
+
+**Configuration for the Beacons**
+
+```c
+# Indoor Positioning Service
+characteristic 	= 0x2AAD
+service			= 0x1821
+```
+
 ## October, 20th 2018
 - I need to solder this to start working on the Arduino, will try it monday.
-<img src="assets/HM-10-Module.svg" alt="drawing" width="300"/>
+  <img src="assets/HM-10-Module.svg" alt="drawing" width="300"/>
 
 - I'll probably be doing this way:
-<img src="assets/possibleDiagram.svg" alt="drawing" width="300"/>
+  <img src="assets/possibleDiagram.svg" alt="drawing" width="300"/>
 
 ## October, 19th 2018
 - This seems interesting: [Mesh Network HM10 and RPi](https://engineersportal.com/blog/2017/1/9/using-raspberry-pi-hm-10-and-bluepy-to-develop-an-ibeacon-mesh-network-part-2)
