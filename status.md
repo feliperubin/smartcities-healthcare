@@ -1,4 +1,20 @@
+## October, 25th 2018
+- Doing the RPi App.
+```bash
+# Dependencies so far
+pip3 install bluepy
+pip3 install matplotlib
+sudo chmod +x app.py #In order to run with ./app.py
+#Will make this run when the server starts
+```
+
+- Apparently since iOS 11 apple won't send packages with the **real** MAC address from their devices. Which is why I wasn't  able to find my iPhone MAC address (even though I know the real one it is not the one beeing broadcasted).
+- I've changed to recognize the Beacons by their given name (local name) [[Link]](http://ianharvey.github.io/bluepy-doc/scanentry.html)
+
+
+
 ## October, 21st 2018
+
 - Based on the Bluetooth 4.0 SPEC [[Link]](https://www.bluetooth.com/specifications/gatt)
 
 **Configuration for the Beacons**
@@ -9,6 +25,10 @@
 # service			= 0x1821
 AT+CHAR0x2AAD
 AT+UUID0x1821
+#
+# RBEACON0 = 00:15:83:40:72:57
+# RBEACON1 = 00:15:83:30:9c:a2
+#
 ```
 
 ## October, 20th 2018

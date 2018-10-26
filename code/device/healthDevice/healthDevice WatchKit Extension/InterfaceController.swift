@@ -10,13 +10,14 @@ import WatchKit
 import Foundation
 import HealthKit
 import WatchConnectivity
+import CoreBluetooth
 /*
  Some Credits:
  https://github.com/coolioxlr/watchOS-3-heartrate/blob/master/VimoHeartRate%20WatchKit%20App%20Extension/InterfaceController.swift
  https://www.codingexplorer.com/watch-connectivity-swift-application-context/
  */
 class InterfaceController: WKInterfaceController,HKWorkoutSessionDelegate,WCSessionDelegate {
-    
+    let ble_manager = BLEManager()
     var session = WCSession.default
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?){}
     func workoutSession(_ workoutSession: HKWorkoutSession, didFailWithError error: Error) {
