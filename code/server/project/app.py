@@ -38,13 +38,17 @@ scanner = Scanner().withDelegate(ScanDelegate())
 # B2_UUID = u''
 # B3_UUID = u''
 # BX_UUID = [B0_UUID,B1_UUID,B2_UUID,B3_UUID]
-BD_NAMES = ['healthDevice','RBEACON0','RBEACON1','RBEACON2','RBEACON3']
+B_RSSI = {'healthDevice': 0,'RBEACON0':0,'RBEACON1':0,'RBEACON2':0,'RBEACON3':0}
+B_PLOT = {'healthDevice': {'xs':[],'ys':[]},'RBEACON0':{'xs':[],'ys':[]},'RBEACON1':{'xs':[],'ys':[]},'RBEACON2':{'xs':[],'ys':[]},'RBEACON3':{'xs':[],'ys':[]}}
+
+# BD_NAMES = ['healthDevice','RBEACON0','RBEACON1','RBEACON2','RBEACON3']
 fig = plt.figure()
 ax = fig.add_subplot(1,1,1,)
-xs = []
-ys = []
-x2s = []
-y2s = []
+
+# xs = []
+# ys = []
+# x2s = []
+# y2s = []
 rssi_test = 0
 rssi_test2 = 0
 time_prev = 0
@@ -55,28 +59,49 @@ mutex_new_data = threading.Lock()
 # Responsible for plotting information
 # 1. Receives data
 # 2. Update the plot image
-def animate(i,xs,ys,x2s,y2s):
+# def animate(i,xs,ys,x2s,y2s):
+def animate(i):
 	# global rssi_test
-	xs.append(time_prev)
-	ys.append(rssi_test)
-	x2s.append(time_prev)
-	y2s.append(rssi_test2)
+	global B_PLOT
+	global B_RSSI
+	# global time_prev
+	values = []
+	curr_time = time.time()
+	for plot_dev in B_PLOT.keys():
+		B_PLOT[plot_dev]['xs'].append(curr_time)
+		B_PLOT[plot_dev]['ys'].append(B_RSSI[plot_dev])
+		B_PLOT[plot_dev]['xs'] = B_PLOT[plot_dev]['xs'][-100:]
+		B_PLOT[plot_dev]['ys'] = B_PLOT[plot_dev]['ys'][-100:]
+		values.append(B_PLOT[plot_dev]['xs'])
+		values.append(B_PLOT[plot_dev]['ys'])
+
+	# B_PLOT['healthDevice']['xs'].append(time_prev)
+	# B_PLOT['healthDevice']['ys'].append(B_RSSI['healthDevice'])
+	# values.append(B_PLOT['healthDevice']['xs'])
+	# values.append(B_PLOT['healthDevice']['ys'])
+	# xs.append(time_prev)
+	# ys.append(rssi_test)
+	# x2s.append(time_prev)
+	# y2s.append(rssi_test2)
 
 
 	# Limit x and y lists to 20 items
-	xs = xs[-100:]
-	ys = ys[-100:]
-	x2s = x2s[-100:]
-	y2s = y2s[-100:]
+
+	# xs = xs[-100:]
+	# ys = ys[-100:]
+	# x2s = x2s[-100:]
+	# y2s = y2s[-100:]
 
 	# Draw x and y lists
 	ax.clear()
-	ax.plot(xs, ys,x2s,y2s)
+	# ax.plot((x,y) for x in B_PLOT.values())
+	ax.plot(*values)
+	# ax.plot(xs, ys,x2s,y2s)
 
 	# Format plot
 	plt.xticks(rotation=45, ha='right')
 	axes = plt.gca()
-	axes.set_ylim([-100,100])
+	# axes.set_ylim([-100,100])
 	plt.subplots_adjust(bottom=0.30)
 	plt.title('Bluetooth over Time')
 	plt.ylabel('RSSI')
@@ -118,9 +143,10 @@ def bluemanager():
 	print("BlueManager Started")
 	time_diff = 0
 	first_time = 1
-	global rssi_test
-	global rssi_test2
+	# global rssi_test
+	# global rssi_test2
 	global time_prev
+	global B_RSSI
 	while 1:
 		try:
 			devices = scanner.scan(0.35)
@@ -128,20 +154,24 @@ def bluemanager():
 			for ii in devices:
 				# if ii.addr in BX_UUID:
 				# if ii.addr == u'59:f9:13:fd:0c:b5':
-				if ii.getValueText(9) in BD_NAMES[1:]:
-					print("Device %s MAC %s, RSSI=%d dB" % (ii.getValueText(9),ii.addr,ii.rssi))
+				# if ii.getValueText(9) in BD_NAMES[1:]:
+				dname = ii.getValueText(9)
+				if dname in B_RSSI:
+					print("Device %s MAC %s, RSSI=%d dB" % (dname,ii.addr,ii.rssi))
 					if first_time == 1:
 						first_time = 0
 						pass
 					else:
 						time_diff = time.time()-time_prev
 					time_prev = time.time()
-					rssi_prev = ii.rssi
-					rssi_test = ii.rssi
-				if ii.getValueText(9) == BD_NAMES[0]:
-					rssi_test2 = ii.rssi
+					# rssi_prev = ii.rssi
+					B_RSSI[dname] = ii.rssi
+					# rssi_test = ii.rssi
+				# if ii.getValueText(9) == BD_NAMES[0]:
+					# rssi_test2 = ii.rssi
 					continue
-		except:
+		except Exception as exc:
+			print("Error ",exc)
 			continue
 	return 0
 
@@ -157,7 +187,8 @@ def main():
 	# Keep running
 	# global rssi_test
 	# ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys,x2s,y2s), interval=1000)
-	ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys,x2s,y2s), interval=250)
+	# ani = animation.FuncAnimation(fig, animate, fargs=(xs, ys,x2s,y2s), interval=250)
+	ani = animation.FuncAnimation(fig, animate, fargs=(), interval=250)
 	plt.show() 
 	while 1:
 		cmd_in = input()

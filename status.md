@@ -1,4 +1,10 @@
+## October, 26th 2018
+- All beacons should appear on the 'real-time' monitor below. There were only two active in this example.
+
+  <img src="assets/monitor-example.jpg" alt="drawing" width="500"/>
+
 ## October, 25th 2018
+
 - Doing the RPi App.
 ```bash
 # Dependencies so far
