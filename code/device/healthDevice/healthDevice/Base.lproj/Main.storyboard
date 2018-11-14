@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,23 +17,55 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="bluetoothLogo" translatesAutoresizingMaskIntoConstraints="NO" id="lJZ-rm-Lkg">
-                                <rect key="frame" x="86" y="83" width="202" height="180"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bluetoothLogo" translatesAutoresizingMaskIntoConstraints="NO" id="lJZ-rm-Lkg">
+                                <rect key="frame" x="87.666666666666686" y="83" width="200" height="200"/>
                                 <color key="tintColor" white="0.5" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="BIA-Kl-jbJ"/>
+                                    <constraint firstAttribute="height" constant="200" id="FHe-LR-WNc"/>
+                                </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Heart Rate:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F3p-T2-Oao">
-                                <rect key="frame" x="16" y="330" width="145" height="36"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Heart Rate:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F3p-T2-Oao">
+                                <rect key="frame" x="16" y="330" width="144.66666666666666" height="36"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFit" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlu-Jy-vb8">
-                                <rect key="frame" x="80" y="508" width="214" height="81"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="80" minValue="0.0" maxValue="300" translatesAutoresizingMaskIntoConstraints="NO" id="5Y0-fq-4aF">
+                                <rect key="frame" x="14" y="623" width="347" height="31"/>
+                                <color key="minimumTrackTintColor" red="0.0" green="0.61930996179580688" blue="0.99721795320510864" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="maximumTrackTintColor" red="0.92549020049999997" green="0.23297827409999999" blue="0.2917439725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="thumbTintColor" red="0.43529412150000002" green="0.4431372583" blue="0.47450980539999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="simulateHeartRateUpdate:" destination="BYZ-38-t0r" eventType="valueChanged" id="coV-QO-Ciy"/>
+                                </connections>
+                            </slider>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m6j-LH-J6a">
+                                <rect key="frame" x="75" y="676" width="225" height="66"/>
+                                <color key="backgroundColor" red="0.92549020049999997" green="0.23297827409516669" blue="0.29174397249345341" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="66" id="wpC-B6-akB"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name=".SFNSDisplay" family=".SF NS Display" pointSize="25"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Enable Simulation"/>
+                                <connections>
+                                    <action selector="enableSimulatedHeartRate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Jbd-rS-hpT"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="---" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D8g-3o-B12">
+                                <rect key="frame" x="175.66666666666663" y="332.33333333333331" width="183.33333333333337" height="31.333333333333314"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlu-Jy-vb8">
+                                <rect key="frame" x="75" y="525" width="225" height="68"/>
                                 <color key="backgroundColor" red="0.09407518059015274" green="0.45820695161819458" blue="0.53393048048019409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <rect key="contentStretch" x="0.0" y="0.0" width="0.75" height="1"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="68" id="yAJ-fz-OEe"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                 <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <state key="normal" title="Start Service">
@@ -43,36 +75,26 @@
                                     <action selector="startButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1zb-mj-uFy"/>
                                 </connections>
                             </button>
-                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="80" minValue="0.0" maxValue="300" translatesAutoresizingMaskIntoConstraints="NO" id="5Y0-fq-4aF">
-                                <rect key="frame" x="14" y="623" width="347" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="minimumTrackTintColor" red="0.0" green="0.61930996179580688" blue="0.99721795320510864" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <color key="maximumTrackTintColor" red="0.92549020049999997" green="0.23297827409999999" blue="0.2917439725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <color key="thumbTintColor" red="0.43529412150000002" green="0.4431372583" blue="0.47450980539999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <action selector="simulateHeartRateUpdate:" destination="BYZ-38-t0r" eventType="valueChanged" id="coV-QO-Ciy"/>
-                                </connections>
-                            </slider>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m6j-LH-J6a">
-                                <rect key="frame" x="74" y="676" width="226" height="66"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.92549020049999997" green="0.23297827409516669" blue="0.29174397249345341" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" name=".SFNSDisplay" family=".SF NS Display" pointSize="25"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" title="Enable Simulation"/>
-                                <connections>
-                                    <action selector="enableSimulatedHeartRate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Jbd-rS-hpT"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="---" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D8g-3o-B12">
-                                <rect key="frame" x="178" y="319" width="181" height="58"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="F3p-T2-Oao" firstAttribute="top" secondItem="lJZ-rm-Lkg" secondAttribute="bottom" constant="47" id="5ML-A9-6Dl"/>
+                            <constraint firstItem="m6j-LH-J6a" firstAttribute="top" secondItem="5Y0-fq-4aF" secondAttribute="bottom" constant="23" id="PPT-1Q-p5f"/>
+                            <constraint firstItem="m6j-LH-J6a" firstAttribute="leading" secondItem="Uee-0j-aNJ" secondAttribute="leading" constant="75" id="R0Y-mI-PFi"/>
+                            <constraint firstItem="Uee-0j-aNJ" firstAttribute="trailing" secondItem="5Y0-fq-4aF" secondAttribute="trailing" constant="16" id="SSi-Zi-C2V"/>
+                            <constraint firstItem="Uee-0j-aNJ" firstAttribute="bottom" secondItem="m6j-LH-J6a" secondAttribute="bottom" constant="36" id="UYl-Bj-ife"/>
+                            <constraint firstItem="D8g-3o-B12" firstAttribute="leading" secondItem="F3p-T2-Oao" secondAttribute="trailing" constant="15" id="VHl-9y-nhO"/>
+                            <constraint firstItem="F3p-T2-Oao" firstAttribute="leading" secondItem="Uee-0j-aNJ" secondAttribute="leading" constant="16" id="Xpl-Z6-qai"/>
+                            <constraint firstItem="lJZ-rm-Lkg" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cQy-JV-Kqw"/>
+                            <constraint firstItem="Uee-0j-aNJ" firstAttribute="trailing" secondItem="m6j-LH-J6a" secondAttribute="trailing" constant="75" id="eB6-vp-AD4"/>
+                            <constraint firstItem="D8g-3o-B12" firstAttribute="centerY" secondItem="F3p-T2-Oao" secondAttribute="centerY" id="eUo-Tk-c7e"/>
+                            <constraint firstItem="5Y0-fq-4aF" firstAttribute="leading" secondItem="Uee-0j-aNJ" secondAttribute="leading" constant="16" id="glg-JL-Ogo"/>
+                            <constraint firstItem="Uee-0j-aNJ" firstAttribute="trailing" secondItem="Tlu-Jy-vb8" secondAttribute="trailing" constant="75" id="kZU-7K-RKJ"/>
+                            <constraint firstItem="Uee-0j-aNJ" firstAttribute="trailing" secondItem="D8g-3o-B12" secondAttribute="trailing" constant="16" id="r5v-dP-FFc"/>
+                            <constraint firstItem="lJZ-rm-Lkg" firstAttribute="top" secondItem="Uee-0j-aNJ" secondAttribute="top" constant="39" id="t1a-re-Myp"/>
+                            <constraint firstItem="5Y0-fq-4aF" firstAttribute="top" secondItem="Tlu-Jy-vb8" secondAttribute="bottom" constant="30" id="tow-84-Ci4"/>
+                            <constraint firstItem="Tlu-Jy-vb8" firstAttribute="leading" secondItem="Uee-0j-aNJ" secondAttribute="leading" constant="75" id="vSz-2e-3kp"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="Uee-0j-aNJ"/>
                     </view>
                     <connections>

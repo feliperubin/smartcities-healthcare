@@ -10,6 +10,8 @@
 	<string>Please, allow us to know where you are whenever we want ?</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Hello, again I need more permissions apparently 5 requests aren&apos;t enought.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>So i guess this is it, but I do require more data from you. Thank you!</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

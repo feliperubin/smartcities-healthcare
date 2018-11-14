@@ -1,3 +1,8 @@
+## November, 13th 2018
+- Created the RSSI table on the iOS app.
+	- Need to check if it is working correctly.
+- Learned how to read the server application.
+
 ## October, 26th 2018
 - All beacons should appear on the 'real-time' monitor below. There were only two active in this example.
 

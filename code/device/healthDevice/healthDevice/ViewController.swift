@@ -17,7 +17,9 @@ import CoreBluetooth
  https://www.hackingwithswift.com/example-code/location/how-to-make-an-iphone-transmit-an-ibeacon
  https://cdn-learn.adafruit.com/downloads/pdf/crack-the-code.pdf
 */
-class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDelegate {
+class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDelegate, CBCentralManagerDelegate,CLLocationManagerDelegate {
+    
+    
 
     /////////////////////////////WATCH/////CONNECTIVITY/////////////////////////////////////////////
     var session: WCSession?
@@ -27,12 +29,23 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         DispatchQueue.main.async {self.processConnectivity()}
     }
+    
     private func updateHeartRateLabel(newhr: String) {
         self.heartRateLabel.text = newhr
         if peripheralManager.isAdvertising {
             peripheralManager.updateValue(self.heartRateLabel.text!.data(using: .utf8)!, for: hrmChar!, onSubscribedCentrals: nil)
         }
     }
+    
+    private func updaterssiTableRateLabel(rssiLabel: String) {
+//        let valueRSSI = String(self.rssiTableRows[self.connectingPeripheral!.name!]!)
+        let valueRSSI = String(self.rssiTableRows[rssiLabel]!)
+        if peripheralManager.isAdvertising{
+            peripheralManager.updateValue(valueRSSI.data(using: .utf8)!, for: rssiTableChars![0],onSubscribedCentrals: nil)
+        }
+        
+    }
+    
    func processConnectivity() {
         print("iOS Connectivity Async")
         if let watchosContext = self.session?.receivedApplicationContext as? [String: String] {
@@ -44,18 +57,88 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     //////////////////////////////////////////////////////////////////////////////////////////////////
     
     let locationManager = CLLocationManager()
-    var localBeacon: CLBeaconRegion!
-    var beaconPeripheralData: NSDictionary!
     var peripheralManager: CBPeripheralManager!
+    
     //HeartRate GATT Profile
     var hrMeasureCharUUID: CBUUID?
     var hrmChar: CBMutableCharacteristic?
     var hrServiceUUID: CBUUID?
     var hrService: CBMutableService?
     var isSimulating = false
+    
+    //Location GATT Profile
+    var rssiTableCharUUID: CBUUID?
+    var rssiTableChars: [CBMutableCharacteristic]! = []
+    var rssiTableServiceUUID: CBUUID?
+    var rssiTableService: CBMutableService?
+    var rssiTableColumns: [String] = [
+        "RBEACON0",
+        "RBEACON1",
+        "RBEACON2",
+        "RBEACON3",
+        "RCENTRAL"
+    ]
+    var rssiTableRows: [String:Int] = [
+        "RBEACON0": 0,
+        "RBEACON1": 0,
+        "RBEACON2": 0,
+        "RBEACON3": 0,
+        "RCENTRAL": 0
+    ]
 //    @IBOutlet weak var serviceStatusLabel: UILabel!
     
     @IBOutlet weak var heartRateSimulationSlider: UISlider!
+    
+    
+    ///////////////////////////////////////////////////////////////
+    var centralManager: CBCentralManager!
+    var connectingPeripheral: CBPeripheral?
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        print("centralManagerDidUpdateState")
+        switch (central.state) {
+        case .poweredOn:
+            print("centralManager Start Scanning")
+            break
+        case .poweredOff:
+            print("centralManager Stop Scanning")
+            break
+        case .resetting:
+            print("centralManager Resetting")
+            break
+        case .unauthorized:
+            print("centralManager Unauthorized")
+        case .unknown:
+            print("centralManager Unknown")
+            break
+        case .unsupported:
+            print("centralManager Unsupported")
+            break
+        }
+    }
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        //Discover Peripheral
+        //Connect to it
+        // Check if it's one of the R<BluetoothDevice>
+        self.connectingPeripheral = peripheral
+        centralManager.connect(peripheral, options: nil)
+        if peripheral.name != nil && rssiTableRows[peripheral.name!] != nil {
+            rssiTableRows[peripheral.name!] = (RSSI as! Int)
+            updaterssiTableRateLabel(rssiLabel: peripheral.name!)
+        }
+        centralManager.cancelPeripheralConnection(peripheral)
+//        centralManager.stopScan()
+//        DispatchQueue.global(qos: .default).async {
+//            DispatchQueue.main.asyncAfter(deadline: waitTime, execute: {
+//                self.animate(withDuration: 0.3, animations: {
+//                    self.hearthImage.setWidth(70)
+//                    self.hearthImage.setHeight(65)
+//                })
+//            })
+//        }
+        
+    }
+    ///////////////////////////////////////////////////////////////
+
     
     @IBAction func enableSimulatedHeartRate(_ sender: UIButton) {
         isSimulating = !isSimulating
@@ -99,7 +182,7 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     private func initPeripheral() {
         peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
         createHRMservice()
-        
+        createLocationservice()
     }
     
     private func createHRMservice() {
@@ -115,14 +198,39 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         self.hrService = CBMutableService(type: hrServiceUUID!, primary: true)
         self.hrService!.characteristics = [hrmChar!]
 //        self.peripheralManager.add(hrService!)
-        
     }
+    private func createLocationservice() {
+        self.rssiTableCharUUID = CBUUID(string: "2AB5")
+        for _ in 1...rssiTableColumns.count {
+            let rssiEntry = CBMutableCharacteristic(type: rssiTableCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
+            
+            self.rssiTableChars?.append(rssiEntry)
+        }
+        self.rssiTableServiceUUID = CBUUID(string: "1821")
+        self.rssiTableService = CBMutableService(type: rssiTableServiceUUID!, primary: false)
+        print("Table Lenght = ",self.rssiTableChars.count)
+        self.rssiTableService!.characteristics = self.rssiTableChars!
+
+    }
+    
     private func startAdvertising() {
         peripheralManager.add(hrService!)
+        peripheralManager.add(rssiTableService!)
         peripheralManager.startAdvertising([
             CBAdvertisementDataLocalNameKey: "healthDevice",
-            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!]
-            ])
+            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!,rssiTableServiceUUID!]
+//            CBAdvertisementDataServiceUUIDsKey: [hrService!]
+        ])
+        
+        
+        
+        
+        //Below works
+//        peripheralManager.add(hrService!)
+//        peripheralManager.startAdvertising([
+//            CBAdvertisementDataLocalNameKey: "healthDevice",
+//            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!]
+//            ])
     }
     private func stopAdvertising() {
         self.peripheralManager.removeAllServices()
@@ -152,8 +260,21 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             session?.activate()
         }
         //Required for Beacon
+        print("Ok 1")
         locationManager.requestAlwaysAuthorization()
+        print("Ok 2")
+        locationManager.requestWhenInUseAuthorization()
+        
+        while CLLocationManager.authorizationStatus() == .denied {
+            locationManager.requestAlwaysAuthorization()
+            locationManager.requestWhenInUseAuthorization()
+        }
+        
         initPeripheral()
+        //Start Central Manager
+        centralManager = CBCentralManager (delegate: self, queue: nil)
+        
+        
     }
     
     @IBAction func startButtonAction(_ sender: UIButton) {
@@ -161,10 +282,12 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             stopAdvertising()
             print("Stopped Advertising")
             sender.setTitle("Start Service", for: .normal)
+            centralManager.stopScan()
         }else {
             startAdvertising()
             print("Started Advertising")
             sender.setTitle("Stop Service", for: .normal)
+            centralManager.scanForPeripherals(withServices: nil, options: nil)
         }
     }
     
