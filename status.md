@@ -1,3 +1,21 @@
+## November, 16th 2018
+- Presented what I've done so far.
+- About the paper:
+	- Talk which technologies were used.
+	- This was created in Swift, that in Python...
+	- Talk about the Hardware:
+		- No idea how, before it would be just a proof of concept.
+		- Now it should be detailed somehow.
+- About the presentation:
+	- Need to think how to present it.
+- Still need to implement KNN to check which beacon  I'm closest to.
+
+
+## November, 15th 2018
+- Corrected RSSI Table.
+	- RPi Can read it.
+- All information is beein received correctly by the RPi.
+
 ## November, 13th 2018
 - Created the RSSI table on the iOS app.
 	- Need to check if it is working correctly.
@@ -9,7 +27,6 @@
   <img src="assets/monitor-example.jpg" alt="drawing" width="500"/>
 
 ## October, 25th 2018
-
 - Doing the RPi App.
 ```bash
 # Dependencies so far

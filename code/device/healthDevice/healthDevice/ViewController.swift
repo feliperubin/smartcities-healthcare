@@ -19,6 +19,7 @@ import CoreBluetooth
 */
 class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDelegate, CBCentralManagerDelegate,CLLocationManagerDelegate {
     
+    @IBOutlet weak var tableView: UITableView!
     
 
     /////////////////////////////WATCH/////CONNECTIVITY/////////////////////////////////////////////
@@ -37,11 +38,11 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         }
     }
     
-    private func updaterssiTableRateLabel(rssiLabel: String) {
+    private func updaterssiTableRateLabel(rssiLabel: String,idx: Int) {
 //        let valueRSSI = String(self.rssiTableRows[self.connectingPeripheral!.name!]!)
         let valueRSSI = String(self.rssiTableRows[rssiLabel]!)
         if peripheralManager.isAdvertising{
-            peripheralManager.updateValue(valueRSSI.data(using: .utf8)!, for: rssiTableChars![0],onSubscribedCentrals: nil)
+            peripheralManager.updateValue(valueRSSI.data(using: .utf8)!, for: rssiTableChars![idx],onSubscribedCentrals: nil)
         }
         
     }
@@ -77,6 +78,7 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         "RBEACON2",
         "RBEACON3",
         "RCENTRAL"
+//        "science"
     ]
     var rssiTableRows: [String:Int] = [
         "RBEACON0": 0,
@@ -84,7 +86,9 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         "RBEACON2": 0,
         "RBEACON3": 0,
         "RCENTRAL": 0
+//        "science":  0
     ]
+//    var rssiTabledRows : [Int] = [0,0,0,0,0]
 //    @IBOutlet weak var serviceStatusLabel: UILabel!
     
     @IBOutlet weak var heartRateSimulationSlider: UISlider!
@@ -119,12 +123,21 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         //Discover Peripheral
         //Connect to it
         // Check if it's one of the R<BluetoothDevice>
+        
         self.connectingPeripheral = peripheral
         centralManager.connect(peripheral, options: nil)
-        if peripheral.name != nil && rssiTableRows[peripheral.name!] != nil {
+//        if peripheral.name != nil && rssiTableRows[peripheral.name!] != nil {
+        if peripheral.name != nil && rssiTableColumns.contains(peripheral.name!) {
+            print("Found: ",peripheral.name!)
             rssiTableRows[peripheral.name!] = (RSSI as! Int)
-            updaterssiTableRateLabel(rssiLabel: peripheral.name!)
+            let idx = rssiTableColumns.firstIndex(of: peripheral.name!)!
+            
+//            var idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
+            updaterssiTableRateLabel(rssiLabel: peripheral.name!,idx: idx)
         }
+            //        }else if peripheral.name != nil{
+//            print("Not connecting to "+peripheral.name!)
+//        }
         centralManager.cancelPeripheralConnection(peripheral)
 //        centralManager.stopScan()
 //        DispatchQueue.global(qos: .default).async {
@@ -164,25 +177,32 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     
     func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
         print("Someone Subscribed")
+        
     }
+    
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
         let currentHeartRate = self.heartRateLabel.text!
-        
         if request.characteristic == hrmChar {
             request.value = currentHeartRate.data(using: .utf8)
             peripheralManager.respond(to: request, withResult: .success)
+        }else if rssiTableChars.contains(request.characteristic as! CBMutableCharacteristic) {
+            var idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
+            var rssiValue = (rssiTableColumns[idx])+";"+String(rssiTableRows[rssiTableColumns[idx]]!)
+            request.value = rssiValue.data(using: .utf8)
+            peripheralManager.respond(to: request, withResult: .success)
+        }else {
+            print("Requested something else")
         }
-        print("Someone asked")
     }
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         //
-        print("Manager Start Advert")
+        print("Manager Start Advertising")
     }
 
     private func initPeripheral() {
         peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
         createHRMservice()
-        createLocationservice()
+//        createLocationservice()
     }
     
     private func createHRMservice() {
@@ -195,31 +215,64 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         self.hrMeasureCharUUID = CBUUID(string: "2A37")
         self.hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
         self.hrServiceUUID = CBUUID(string: "180D")
+//        self.hrServiceUUID = CBUUID(string: "1226")
         self.hrService = CBMutableService(type: hrServiceUUID!, primary: true)
-        self.hrService!.characteristics = [hrmChar!]
+//        self.hrService!.characteristics = [hrmChar!]
+        rssiTableChars.append(hrmChar!)
+//        self.hrService!.characteristics = [hrmChar!]
 //        self.peripheralManager.add(hrService!)
+        
+        self.rssiTableCharUUID = CBUUID(string: "2A69")
+        for _ in 1...rssiTableColumns.count {
+            //        for _ in 1...1{
+            var rssiEntry = CBMutableCharacteristic(type: rssiTableCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
+            self.rssiTableChars?.append(rssiEntry)
+        }
+        
+        self.hrService!.characteristics = self.rssiTableChars
     }
     private func createLocationservice() {
         self.rssiTableCharUUID = CBUUID(string: "2AB5")
         for _ in 1...rssiTableColumns.count {
-            let rssiEntry = CBMutableCharacteristic(type: rssiTableCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
+            var rssiEntry = CBMutableCharacteristic(type: rssiTableCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
             
+            //
+            let userDescriptionUuid:CBUUID = CBUUID(string:CBUUIDCharacteristicUserDescriptionString)
+            var myDescriptor = CBMutableDescriptor(type:userDescriptionUuid, value:"Table Row")
+
+            rssiEntry.descriptors = [myDescriptor]
             self.rssiTableChars?.append(rssiEntry)
+            
         }
-        self.rssiTableServiceUUID = CBUUID(string: "1821")
+//        self.rssiTableServiceUUID = CBUUID(string: "1821")
+        self.rssiTableServiceUUID = CBUUID(string: "1810")
         self.rssiTableService = CBMutableService(type: rssiTableServiceUUID!, primary: false)
+        
+        
         print("Table Lenght = ",self.rssiTableChars.count)
         self.rssiTableService!.characteristics = self.rssiTableChars!
-
+        //
+        //
+        //
+//        var mutableSrvc = CBMutableService(type: CBUUID(string: "2612"), primary: false)
+        
+//        var mutableChar = CBMutableCharacteristic(type: rssiTableCharUUID!, properties:
+//            [.read,.notify], value: nil, permissions: [.readable])
+//        print("Descriptors: ",mutableChar.descriptors)
+//
+//        var mutableDescr = CBMutableDescriptor(type: CBUUID(string: "0290C"), value: CBUUIDCharacteristicUserDescriptionString)
+        
+        
     }
     
     private func startAdvertising() {
         peripheralManager.add(hrService!)
-        peripheralManager.add(rssiTableService!)
+        //peripheralManager.add(rssiTableService!)
         peripheralManager.startAdvertising([
             CBAdvertisementDataLocalNameKey: "healthDevice",
-            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!,rssiTableServiceUUID!]
+//            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!,rssiTableServiceUUID!]
 //            CBAdvertisementDataServiceUUIDsKey: [hrService!]
+            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!]
         ])
         
         
@@ -273,8 +326,12 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         initPeripheral()
         //Start Central Manager
         centralManager = CBCentralManager (delegate: self, queue: nil)
-        
-        
+        /*
+        tableView.beginUpdates()
+        tableView.insertRows(at: [IndexPath(row: rssiTableRows.count-1, section: 0)],with: .automatic)
+        tableView.endUpdates()
+        tableView.reloadData()
+        */
     }
     
     @IBAction func startButtonAction(_ sender: UIButton) {
