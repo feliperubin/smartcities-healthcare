@@ -1,3 +1,5 @@
+## November, 20th 2018
+- Added Training function on the iOS App
 ## November, 16th 2018
 - Presented what I've done so far.
 - About the paper:

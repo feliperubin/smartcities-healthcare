@@ -19,8 +19,8 @@ import CoreBluetooth
 */
 class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDelegate, CBCentralManagerDelegate,CLLocationManagerDelegate {
     
-    @IBOutlet weak var tableView: UITableView!
     
+
 
     /////////////////////////////WATCH/////CONNECTIVITY/////////////////////////////////////////////
     var session: WCSession?
@@ -88,8 +88,76 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         "RCENTRAL": 0
 //        "science":  0
     ]
+    // Training GATT Profile
+    //0x2AAD
+    var trainingCharUUID: CBUUID?
+    var trainingChar: CBMutableCharacteristic?
+    
+    let semaphore = DispatchSemaphore(value: 1)
+
+    
 //    var rssiTabledRows : [Int] = [0,0,0,0,0]
 //    @IBOutlet weak var serviceStatusLabel: UILabel!
+    
+    @IBOutlet weak var trainingTimeStepper: UIStepper!
+    
+    var trainingEnabled = false
+    
+    @IBAction func trainingTimerStepperAction(_ sender: Any) {
+        self.trainingButton.setTitle("Start Training \(Int(self.trainingTimeStepper.value))", for: .normal)
+    }
+    
+    @IBOutlet weak var trainingLabel: UILabel!
+    
+    @IBOutlet weak var trainingStepper: UIStepper!
+    var trainingTimer: Timer!
+    var trainingCountdown = 1
+    
+    @IBAction func beaconSelectionStepperAction(_ sender: UIStepper!) {
+        self.trainingLabel.text = rssiTableColumns[Int(sender!.value)]
+    }
+    
+    @IBOutlet weak var trainingButton: UIButton!
+    
+    @IBAction func trainingButtonAction(_ sender: UIButton) {
+        if trainingEnabled {
+            stopTimer()
+            self.trainingTimeStepper.isEnabled = true
+            self.trainingStepper.isEnabled = true
+            sender.setTitle("Start Training \(Int(self.trainingTimeStepper!.value))", for: .normal)
+        } else {
+            self.trainingTimeStepper.isEnabled = false
+            self.trainingStepper.isEnabled = false
+            sender.setTitle("Stop Training \(Int(self.trainingTimeStepper!.value))", for: .normal)
+            startTimer(sec: Int(self.trainingTimeStepper!.value))
+        }
+        trainingEnabled = !trainingEnabled
+    }
+    //https://teamtreehouse.com/community/swift-countdown-timer-of-60-seconds
+    
+    private func startTimer(sec: Int) {
+        trainingCountdown = sec-1
+        trainingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+    }
+    
+    @objc private func updateTimer() {
+        if self.trainingCountdown < 0 {
+            self.trainingEnabled = false
+            self.trainingButton.setTitle("Start Training \(Int(self.trainingTimeStepper.value))", for: .normal)
+            self.trainingTimeStepper.isEnabled = true
+            self.trainingStepper.isEnabled = true
+            stopTimer()
+            
+        }else{
+            trainingButton.setTitle("Stop Training \(trainingCountdown)", for: .normal)
+            trainingCountdown-=1
+        }
+    }
+    
+    private func stopTimer() {
+        trainingTimer.invalidate()
+    }
+    
     
     @IBOutlet weak var heartRateSimulationSlider: UISlider!
     
@@ -182,15 +250,26 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
         let currentHeartRate = self.heartRateLabel.text!
-        if request.characteristic == hrmChar {
+        if request.characteristic == self.hrmChar {
             request.value = currentHeartRate.data(using: .utf8)
             peripheralManager.respond(to: request, withResult: .success)
+        }else if request.characteristic == self.trainingChar{
+            if trainingEnabled {
+                request.value = self.rssiTableColumns[Int(trainingStepper.value)].data(using: .utf8)
+            } else {
+                request.value = "-1".data(using: .utf8)
+            }
+            peripheralManager.respond(to: request, withResult: .success)
         }else if rssiTableChars.contains(request.characteristic as! CBMutableCharacteristic) {
-            var idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
-            var rssiValue = (rssiTableColumns[idx])+";"+String(rssiTableRows[rssiTableColumns[idx]]!)
+            /*
+                If there's a problem here is because of the -1 instead of -2 ?
+             */
+            let idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
+            let rssiValue = (rssiTableColumns[idx])+";"+String(rssiTableRows[rssiTableColumns[idx]]!)
             request.value = rssiValue.data(using: .utf8)
             peripheralManager.respond(to: request, withResult: .success)
         }else {
+            peripheralManager.respond(to: request, withResult: .attributeNotFound)
             print("Requested something else")
         }
     }
@@ -229,6 +308,9 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             self.rssiTableChars?.append(rssiEntry)
         }
         
+        self.trainingCharUUID = CBUUID(string: "2AAD")
+        self.trainingChar = CBMutableCharacteristic(type: trainingCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
+        rssiTableChars.append(trainingChar!)
         self.hrService!.characteristics = self.rssiTableChars
     }
     private func createLocationservice() {
@@ -307,6 +389,7 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //Required for WatchConnectivity
+        self.trainingLabel.text = self.rssiTableColumns.first!
         if(WCSession.isSupported()) {
             session = WCSession.default
             session?.delegate = self
@@ -332,7 +415,9 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         tableView.endUpdates()
         tableView.reloadData()
         */
+        
     }
+    
     
     @IBAction func startButtonAction(_ sender: UIButton) {
         if peripheralManager.isAdvertising {

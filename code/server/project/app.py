@@ -6,6 +6,7 @@
 # Requirements:
 # sudo apt install python3-pip libglib2.0-dev
 # sudo pip3 install bluepy
+# sudo pip3 install scikit-learn
 # Run this:
 # sudo su
 # chmod +x app.py

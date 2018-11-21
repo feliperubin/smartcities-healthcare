@@ -75,6 +75,45 @@
                                     <action selector="startButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1zb-mj-uFy"/>
                                 </connections>
                             </button>
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="4" translatesAutoresizingMaskIntoConstraints="NO" id="eud-TY-ZmV">
+                                <rect key="frame" x="193" y="464" width="94" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </stepper>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="---" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NWd-GT-yeP">
+                                <rect key="frame" x="193" y="413" width="117" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AAG-aP-0ua">
+                                <rect key="frame" x="20" y="389" width="136" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.69381827116012573" green="0.88303542137145996" blue="0.64181679487228394" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="tintColor" cyan="0.23763912671232876" magenta="0.44382576950608865" yellow="0.43442315924657532" black="0.16598923141891891" alpha="1" colorSpace="custom" customColorSpace="genericCMYKColorSpace"/>
+                                <state key="normal" title="Start Training 1"/>
+                                <connections>
+                                    <action selector="trainingButtonAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="01T-AZ-d0G"/>
+                                </connections>
+                            </button>
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="4" translatesAutoresizingMaskIntoConstraints="NO" id="FiZ-By-gZc">
+                                <rect key="frame" x="193" y="464" width="94" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.81176470590000005" green="0.61960784310000006" blue="0.45882352939999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.1411764771" green="0.3960784376" blue="0.5647059083" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="beaconSelectionStepperAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="Ntp-an-gAa"/>
+                                </connections>
+                            </stepper>
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="9999999" translatesAutoresizingMaskIntoConstraints="NO" id="ljM-oS-EQb">
+                                <rect key="frame" x="41" y="464" width="94" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.56038761138916016" green="0.41290810704231262" blue="0.63904714584350586" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="trainingTimerStepperAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="Ay7-eC-D9I"/>
+                                </connections>
+                            </stepper>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -101,6 +140,10 @@
                         <outlet property="heartRateLabel" destination="D8g-3o-B12" id="uio-ag-iiK"/>
                         <outlet property="heartRateSimulationSlider" destination="5Y0-fq-4aF" id="tDh-XL-IaN"/>
                         <outlet property="startButton" destination="Tlu-Jy-vb8" id="WGB-mQ-HV2"/>
+                        <outlet property="trainingButton" destination="AAG-aP-0ua" id="NO6-Se-kTi"/>
+                        <outlet property="trainingLabel" destination="NWd-GT-yeP" id="8c4-bL-Bye"/>
+                        <outlet property="trainingStepper" destination="FiZ-By-gZc" id="BZC-ah-YdA"/>
+                        <outlet property="trainingTimeStepper" destination="ljM-oS-EQb" id="KmQ-pI-7E8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
