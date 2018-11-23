@@ -187,6 +187,12 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             break
         }
     }
+//    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+//        print("centralManager connected to \(String(describing: peripheral.name))")
+//    }
+//    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+//        print("centralManager failed to connect to \(String(describing: peripheral.name))")
+//    }
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         //Discover Peripheral
         //Connect to it
@@ -203,10 +209,8 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
 //            var idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
             updaterssiTableRateLabel(rssiLabel: peripheral.name!,idx: idx)
         }
-            //        }else if peripheral.name != nil{
-//            print("Not connecting to "+peripheral.name!)
-//        }
         centralManager.cancelPeripheralConnection(peripheral)
+        
 //        centralManager.stopScan()
 //        DispatchQueue.global(qos: .default).async {
 //            DispatchQueue.main.asyncAfter(deadline: waitTime, execute: {
@@ -255,7 +259,8 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             peripheralManager.respond(to: request, withResult: .success)
         }else if request.characteristic == self.trainingChar{
             if trainingEnabled {
-                request.value = self.rssiTableColumns[Int(trainingStepper.value)].data(using: .utf8)
+                request.value = "\(Int(trainingStepper.value))".data(using: .utf8)
+//                    self.rssiTableColumns[Int(trainingStepper.value)].data(using: .utf8)
             } else {
                 request.value = "-1".data(using: .utf8)
             }
@@ -429,8 +434,11 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             startAdvertising()
             print("Started Advertising")
             sender.setTitle("Stop Service", for: .normal)
-            centralManager.scanForPeripherals(withServices: nil, options: nil)
+            //centralManager.scanForPeripherals(withServices: nil, options: nil)
+            let scanOpts = [CBCentralManagerScanOptionAllowDuplicatesKey: NSNumber(value: true)]
+            centralManager.scanForPeripherals(withServices: nil, options: scanOpts)
         }
+        //print("centralManager State: \(centralManager.state)")
     }
     
 

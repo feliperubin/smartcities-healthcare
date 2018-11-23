@@ -1,3 +1,6 @@
+## November 23rd 2018
+- Implemented KNN
+- Seems to be working, but need to configure the parameters better
 ## November, 20th 2018
 - Added Training function on the iOS App
 ## November, 16th 2018
