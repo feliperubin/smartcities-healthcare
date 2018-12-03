@@ -55,7 +55,8 @@ scanner = Scanner().withDelegate(ScanDelegate())
 B_TABLE = {'RBEACON0':0,'RBEACON1':0,'RBEACON2':0,'RBEACON3':0,'science': 0} 
 B_RSSI = {'healthDevice': 0,'RBEACON0':0,'RBEACON1':0,'RBEACON2':0,'RBEACON3':0}
 B_PLOT = {'healthDevice': {'xs':[],'ys':[],'color':'b'},'RBEACON0':{'xs':[],'ys':[],'color':'g'},'RBEACON1':{'xs':[],'ys':[],'color':'r'},'RBEACON2':{'xs':[],'ys':[],'color':'c'},'RBEACON3':{'xs':[],'ys':[],'color':'m'}}
-B_COLUMNS = ['RBEACON0','RBEACON1','RBEACON2','RBEACON3','science','Class']
+# B_COLUMNS = ['RBEACON0','RBEACON1','RBEACON2','RBEACON3','science','Class']
+B_COLUMNS = np.array(['RBEACON0','RBEACON1','RBEACON2','RBEACON3','science','Class'])
 #
 # Class 	| CHAR(RBEACON0) | CHAR(RBEACON1) | CHAR(RBEACON2) | CHAR(RBEACON3)
 # RBEACON0	| RSSI			 |	RSSI		  |	RSSI		   | RSSI
@@ -114,8 +115,11 @@ def animate(i):
 	for plot_dev in B_PLOT.keys():
 		B_PLOT[plot_dev]['xs'].append(curr_time)
 		B_PLOT[plot_dev]['ys'].append(B_RSSI[plot_dev])
-		B_PLOT[plot_dev]['xs'] = B_PLOT[plot_dev]['xs'][-100:]
-		B_PLOT[plot_dev]['ys'] = B_PLOT[plot_dev]['ys'][-100:]
+		
+		#UNCOMMENT TO SAVE MEMORY
+		#B_PLOT[plot_dev]['xs'] = B_PLOT[plot_dev]['xs'][-100:]
+		#B_PLOT[plot_dev]['ys'] = B_PLOT[plot_dev]['ys'][-100:]
+
 		# values.append(B_PLOT[plot_dev]['xs'])
 		# values.append(B_PLOT[plot_dev]['ys'])
 		# values.append(color="blue")
@@ -246,10 +250,12 @@ def field_study():
 # LOAD FROM CSV
 # CLEAR TABLE
 # 
+csvindex = 0
 # NOTE: NEED TO CREATE A MUTEX TO CHANGE THE KNN_TABLE HERE
 def climanager():
 	global verbose
 	global knn_table
+	global csvindex
 	print('CLIManager Started')
 	cmd_in = ""
 	while 1:
@@ -262,6 +268,25 @@ def climanager():
 			print(knn_table)
 		elif cmd_in == "verbose":
 			verbose = not verbose
+		elif cmd_in == "last" or cmd_in == "latest":
+			for b in B_RSSI.keys():
+				print(b,'\t',B_RSSI[b])
+		elif cmd_in == "dump":
+			while os.path.exists("knn_table"+str(csvindex)+".csv"):
+				csvindex+=1
+
+			knn_table.to_csv("knn_table"+str(csvindex)+".csv", sep=';', encoding='utf-8')
+			csvindex+=1
+		elif cmd_in == "help":
+			print("""\n
+				help - display the commands
+				q/quit - quits the app
+				train - start training
+				table - displays the training table
+				verbose - enable verbose mode
+				last/latest - shows latest recording
+				dump - save to csv current table\n
+				""")
 		else:
 			print("Command not known")
 		# print(cmd_in)
