@@ -14,15 +14,64 @@ import WatchConnectivity
 import CoreLocation
 import CoreBluetooth
 /*
+ Transmitting as iBeacon
  https://www.hackingwithswift.com/example-code/location/how-to-make-an-iphone-transmit-an-ibeacon
+ Adafruit about BLE
  https://cdn-learn.adafruit.com/downloads/pdf/crack-the-code.pdf
+ How to Create a Timer
+ https://teamtreehouse.com/community/swift-countdown-timer-of-60-seconds
 */
-class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDelegate, CBCentralManagerDelegate,CLLocationManagerDelegate {
+class ViewController: UIViewController, WCSessionDelegate, CBCentralManagerDelegate,CLLocationManagerDelegate,UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.trainingLocations.count
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return self.trainingLocations[row]
+    }
     
     
+    // Test Socket
+    var socket = SocketServer(hostIP: "10.26.12.4", hostPort: 9999)
+    
+    @IBOutlet weak var locationPicker: UIPickerView!
+    @IBOutlet weak var trainingSince: UILabel!
+    @IBOutlet weak var heartRateSimulationSlider: UISlider!
+    
+    @IBOutlet weak var ipAddressTextField: UITextField!
+    
+    @IBOutlet weak var knnTextField: UITextField!
+    private var knnrequest = false
+    
+    @IBOutlet weak var knnButton: UIButton!
+    
+    @IBAction func knnButtonAction(_ sender: Any) {
+        knnrequest = true
+        self.knnButton.isEnabled = false
+        postUpdate()
+    }
+    
+    
+    @IBAction func knnSet(_ sender: Any) {
+        knnTextField.resignFirstResponder()
+    }
+    
+    
+    @IBAction func ipAddressSet(_ sender: Any) {
+        ipAddressTextField.resignFirstResponder()
 
+    }
+    
+    @IBAction func portSet(_ sender: Any) {
+        portTextField.resignFirstResponder()
 
-    /////////////////////////////WATCH/////CONNECTIVITY/////////////////////////////////////////////
+    }
+
+    @IBOutlet weak var portTextField: UITextField!
+    //BEGIN WATCH CONNECTIVITY//
     var session: WCSession?
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?){}
     func sessionDidBecomeInactive(_ session: WCSession) {}
@@ -33,20 +82,12 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
     
     private func updateHeartRateLabel(newhr: String) {
         self.heartRateLabel.text = newhr
-        if peripheralManager.isAdvertising {
-            peripheralManager.updateValue(self.heartRateLabel.text!.data(using: .utf8)!, for: hrmChar!, onSubscribedCentrals: nil)
-        }
+        postUpdate()
     }
     
-    private func updaterssiTableRateLabel(rssiLabel: String,idx: Int) {
-//        let valueRSSI = String(self.rssiTableRows[self.connectingPeripheral!.name!]!)
-        let valueRSSI = String(self.rssiTableRows[rssiLabel]!)
-        if peripheralManager.isAdvertising{
-            peripheralManager.updateValue(valueRSSI.data(using: .utf8)!, for: rssiTableChars![idx],onSubscribedCentrals: nil)
-        }
-        
-    }
-    
+    /**
+     Get the Heart Rate Value from Apple Watch
+     */
    func processConnectivity() {
         print("iOS Connectivity Async")
         if let watchosContext = self.session?.receivedApplicationContext as? [String: String] {
@@ -55,114 +96,81 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             }
         }
     }
-    //////////////////////////////////////////////////////////////////////////////////////////////////
+    // END WATCH CONNECTIVITY //
     
     let locationManager = CLLocationManager()
-    var peripheralManager: CBPeripheralManager!
-    
-    //HeartRate GATT Profile
-    var hrMeasureCharUUID: CBUUID?
-    var hrmChar: CBMutableCharacteristic?
-    var hrServiceUUID: CBUUID?
-    var hrService: CBMutableService?
     var isSimulating = false
     
-    //Location GATT Profile
-    var rssiTableCharUUID: CBUUID?
-    var rssiTableChars: [CBMutableCharacteristic]! = []
-    var rssiTableServiceUUID: CBUUID?
-    var rssiTableService: CBMutableService?
+    // Devices
     var rssiTableColumns: [String] = [
         "RBEACON0",
         "RBEACON1",
         "RBEACON2",
-        "RBEACON3",
-        "RCENTRAL"
-//        "science"
+        "RBEACON3"
     ]
     var rssiTableRows: [String:Int] = [
         "RBEACON0": 0,
         "RBEACON1": 0,
         "RBEACON2": 0,
-        "RBEACON3": 0,
-        "RCENTRAL": 0
-//        "science":  0
+        "RBEACON3": 0
     ]
-    // Training GATT Profile
-    //0x2AAD
-    var trainingCharUUID: CBUUID?
-    var trainingChar: CBMutableCharacteristic?
+    /* Training Locations to Pick From */
+    var trainingLocations: [String] = [
+        "Living Room",
+        "Bathroom",
+        "Master Bedroom",
+        "Guest Bedroom",
+        "Kitchen",
+        "Garage",
+        "Garden",
+        "Second Floor"
+    ]
     
-    let semaphore = DispatchSemaphore(value: 1)
-
-    
-//    var rssiTabledRows : [Int] = [0,0,0,0,0]
-//    @IBOutlet weak var serviceStatusLabel: UILabel!
-    
-    @IBOutlet weak var trainingTimeStepper: UIStepper!
+    //let semaphore = DispatchSemaphore(value: 1)
     
     var trainingEnabled = false
+    var trackingEnabled = false
     
-    @IBAction func trainingTimerStepperAction(_ sender: Any) {
-        self.trainingButton.setTitle("Start Training \(Int(self.trainingTimeStepper.value))", for: .normal)
+    @IBAction func setTrackingStatus(_ sender: UIButton!) {
+        if self.trackingEnabled {
+            sender.setTitle("Enable Tracking", for: .normal)
+            self.trackingEnabled = false
+        }else {
+            sender.setTitle("Disable Tracking", for: .normal)
+            self.trackingEnabled = true
+        }
     }
-    
-    @IBOutlet weak var trainingLabel: UILabel!
-    
-    @IBOutlet weak var trainingStepper: UIStepper!
+
     var trainingTimer: Timer!
     var trainingCountdown = 1
     
-    @IBAction func beaconSelectionStepperAction(_ sender: UIStepper!) {
-        self.trainingLabel.text = rssiTableColumns[Int(sender!.value)]
-    }
-    
     @IBOutlet weak var trainingButton: UIButton!
-    
+    private var trainingCounter: Int = 0
     @IBAction func trainingButtonAction(_ sender: UIButton) {
         if trainingEnabled {
             stopTimer()
-            self.trainingTimeStepper.isEnabled = true
-            self.trainingStepper.isEnabled = true
-            sender.setTitle("Start Training \(Int(self.trainingTimeStepper!.value))", for: .normal)
-        } else {
-            self.trainingTimeStepper.isEnabled = false
-            self.trainingStepper.isEnabled = false
-            sender.setTitle("Stop Training \(Int(self.trainingTimeStepper!.value))", for: .normal)
-            startTimer(sec: Int(self.trainingTimeStepper!.value))
+            self.trainingSince.text = "---"
+            self.trainingCounter = 0
+            sender.setTitle("Start Training", for: .normal)
+        }else {
+            sender.setTitle("Stop Training", for: .normal)
+            startTimer()
         }
         trainingEnabled = !trainingEnabled
     }
-    //https://teamtreehouse.com/community/swift-countdown-timer-of-60-seconds
-    
-    private func startTimer(sec: Int) {
-        trainingCountdown = sec-1
-        trainingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
+
+    private func startTimer() {
+        trainingTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(incrementTimer), userInfo: nil, repeats: true)
     }
-    
-    @objc private func updateTimer() {
-        if self.trainingCountdown < 0 {
-            self.trainingEnabled = false
-            self.trainingButton.setTitle("Start Training \(Int(self.trainingTimeStepper.value))", for: .normal)
-            self.trainingTimeStepper.isEnabled = true
-            self.trainingStepper.isEnabled = true
-            stopTimer()
-            
-        }else{
-            trainingButton.setTitle("Stop Training \(trainingCountdown)", for: .normal)
-            trainingCountdown-=1
-        }
+
+    @objc private func incrementTimer() {
+        self.trainingCounter+=1
+        self.trainingSince.text=String(self.trainingCounter)
     }
-    
     private func stopTimer() {
         trainingTimer.invalidate()
     }
-    
-    
-    @IBOutlet weak var heartRateSimulationSlider: UISlider!
-    
-    
-    ///////////////////////////////////////////////////////////////
+
     var centralManager: CBCentralManager!
     var connectingPeripheral: CBPeripheral?
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -187,44 +195,24 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
             break
         }
     }
-//    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-//        print("centralManager connected to \(String(describing: peripheral.name))")
-//    }
-//    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-//        print("centralManager failed to connect to \(String(describing: peripheral.name))")
-//    }
+    
+    //Discover Peripheral
+    //Connect to it
+    // Check if it's one of the R<BluetoothDevice>
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        //Discover Peripheral
-        //Connect to it
-        // Check if it's one of the R<BluetoothDevice>
-        
         self.connectingPeripheral = peripheral
         centralManager.connect(peripheral, options: nil)
-//        if peripheral.name != nil && rssiTableRows[peripheral.name!] != nil {
         if peripheral.name != nil && rssiTableColumns.contains(peripheral.name!) {
             print("Found: ",peripheral.name!)
             rssiTableRows[peripheral.name!] = (RSSI as! Int)
-            let idx = rssiTableColumns.firstIndex(of: peripheral.name!)!
-            
-//            var idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
-            updaterssiTableRateLabel(rssiLabel: peripheral.name!,idx: idx)
+            postUpdate()
         }
         centralManager.cancelPeripheralConnection(peripheral)
-        
-//        centralManager.stopScan()
-//        DispatchQueue.global(qos: .default).async {
-//            DispatchQueue.main.asyncAfter(deadline: waitTime, execute: {
-//                self.animate(withDuration: 0.3, animations: {
-//                    self.hearthImage.setWidth(70)
-//                    self.hearthImage.setHeight(65)
-//                })
-//            })
-//        }
-        
     }
-    ///////////////////////////////////////////////////////////////
 
-    
+    /*
+        Enables Simulating Heart Rate trough the Slider
+     */
     @IBAction func enableSimulatedHeartRate(_ sender: UIButton) {
         isSimulating = !isSimulating
         if isSimulating{
@@ -236,10 +224,55 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         
     }
     
+    private func postUpdate() {
+        var js_devices = "\"devices\":{"
+        for dkey in rssiTableRows.keys {
+            js_devices+="\""+String(dkey)+"\":"+"\(String(rssiTableRows[dkey]!)),"
+        }
+        js_devices = js_devices[0..<js_devices.count-1]
+        js_devices+="}"
+        let js_track = "\"track\":\(String(trackingEnabled))"
+        var js_learn = "\"learn\":"
+        if trainingEnabled {
+            //js_train+=locationPicker.
+            //Selected row
+            let srow = self.locationPicker.selectedRow(inComponent: 0)
+            if srow > -1 {
+                js_learn+="\"\(self.trainingLocations[srow])\""
+            }else{
+                js_learn+="null"
+            }
+        }else {
+            js_learn+="null"
+        }
+        var js_hrm = "\"hrm\":"
+        if self.heartRateLabel.text == "---" {
+            js_hrm+="null"
+        }else{
+            js_hrm+="\(self.heartRateLabel.text!)"
+        }
+        
+        let js_knn = "\"knn\":\(knnTextField.text!)"
+        let js_train = "\"train\":\(String(knnrequest))"
+        if knnrequest {
+            knnrequest = false
+            knnButton.isEnabled = true
+        }
+        let json_data = "{"+js_hrm+","+js_knn+","+js_learn+","+js_train+","+js_track+","+js_devices+"}"
+        if centralManager.isScanning{
+            socket.sendMessage(message: json_data)
+        }
+    }
+    
+    /*
+        Slider to simulate Heart Rate an update happened
+     */
     @IBAction func simulateHeartRateUpdate(_ sender: UISlider) {
         updateHeartRateLabel(newhr: String(Int(sender.value.rounded(.toNearestOrEven))))
     }
-    
+    /*
+        Warning that bluetooth is off
+     */
     private func warnBluetoothOff() {
         let alertVC = UIAlertController(title: "Bluetooth is OFF", message: "Please enable bluetooth", preferredStyle: .alert)
         let action = UIAlertAction(title: "ok", style: .default, handler: nil)
@@ -247,146 +280,6 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         self.present(alertVC, animated: true, completion: nil)
     }
     
-    func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
-        print("Someone Subscribed")
-        
-    }
-    
-    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
-        let currentHeartRate = self.heartRateLabel.text!
-        if request.characteristic == self.hrmChar {
-            request.value = currentHeartRate.data(using: .utf8)
-            peripheralManager.respond(to: request, withResult: .success)
-        }else if request.characteristic == self.trainingChar{
-            if trainingEnabled {
-                request.value = "\(Int(trainingStepper.value))".data(using: .utf8)
-//                    self.rssiTableColumns[Int(trainingStepper.value)].data(using: .utf8)
-            } else {
-                request.value = "-1".data(using: .utf8)
-            }
-            peripheralManager.respond(to: request, withResult: .success)
-        }else if rssiTableChars.contains(request.characteristic as! CBMutableCharacteristic) {
-            /*
-                If there's a problem here is because of the -1 instead of -2 ?
-             */
-            let idx = rssiTableChars.index(of: request.characteristic as! CBMutableCharacteristic)! - 1
-            let rssiValue = (rssiTableColumns[idx])+";"+String(rssiTableRows[rssiTableColumns[idx]]!)
-            request.value = rssiValue.data(using: .utf8)
-            peripheralManager.respond(to: request, withResult: .success)
-        }else {
-            peripheralManager.respond(to: request, withResult: .attributeNotFound)
-            print("Requested something else")
-        }
-    }
-    func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
-        //
-        print("Manager Start Advertising")
-    }
-
-    private func initPeripheral() {
-        peripheralManager = CBPeripheralManager(delegate: self,queue: nil, options: nil)
-        createHRMservice()
-//        createLocationservice()
-    }
-    
-    private func createHRMservice() {
-        /*
-         Really Important NOTE:
-         Initialize the characteristic value with NIL,
-         otherwise it'll be a cachedvalue and can't be changed.
-         Also, it won't show up for scan for some reason ?
-         */
-        self.hrMeasureCharUUID = CBUUID(string: "2A37")
-        self.hrmChar = CBMutableCharacteristic(type: hrMeasureCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
-        self.hrServiceUUID = CBUUID(string: "180D")
-//        self.hrServiceUUID = CBUUID(string: "1226")
-        self.hrService = CBMutableService(type: hrServiceUUID!, primary: true)
-//        self.hrService!.characteristics = [hrmChar!]
-        rssiTableChars.append(hrmChar!)
-//        self.hrService!.characteristics = [hrmChar!]
-//        self.peripheralManager.add(hrService!)
-        
-        self.rssiTableCharUUID = CBUUID(string: "2A69")
-        for _ in 1...rssiTableColumns.count {
-            //        for _ in 1...1{
-            var rssiEntry = CBMutableCharacteristic(type: rssiTableCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
-            self.rssiTableChars?.append(rssiEntry)
-        }
-        
-        self.trainingCharUUID = CBUUID(string: "2AAD")
-        self.trainingChar = CBMutableCharacteristic(type: trainingCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
-        rssiTableChars.append(trainingChar!)
-        self.hrService!.characteristics = self.rssiTableChars
-    }
-    private func createLocationservice() {
-        self.rssiTableCharUUID = CBUUID(string: "2AB5")
-        for _ in 1...rssiTableColumns.count {
-            var rssiEntry = CBMutableCharacteristic(type: rssiTableCharUUID!, properties: [.read,.notify], value: nil, permissions: [.readable])
-            
-            //
-            let userDescriptionUuid:CBUUID = CBUUID(string:CBUUIDCharacteristicUserDescriptionString)
-            var myDescriptor = CBMutableDescriptor(type:userDescriptionUuid, value:"Table Row")
-
-            rssiEntry.descriptors = [myDescriptor]
-            self.rssiTableChars?.append(rssiEntry)
-            
-        }
-//        self.rssiTableServiceUUID = CBUUID(string: "1821")
-        self.rssiTableServiceUUID = CBUUID(string: "1810")
-        self.rssiTableService = CBMutableService(type: rssiTableServiceUUID!, primary: false)
-        
-        
-        print("Table Lenght = ",self.rssiTableChars.count)
-        self.rssiTableService!.characteristics = self.rssiTableChars!
-        //
-        //
-        //
-//        var mutableSrvc = CBMutableService(type: CBUUID(string: "2612"), primary: false)
-        
-//        var mutableChar = CBMutableCharacteristic(type: rssiTableCharUUID!, properties:
-//            [.read,.notify], value: nil, permissions: [.readable])
-//        print("Descriptors: ",mutableChar.descriptors)
-//
-//        var mutableDescr = CBMutableDescriptor(type: CBUUID(string: "0290C"), value: CBUUIDCharacteristicUserDescriptionString)
-        
-        
-    }
-    
-    private func startAdvertising() {
-        peripheralManager.add(hrService!)
-        //peripheralManager.add(rssiTableService!)
-        peripheralManager.startAdvertising([
-            CBAdvertisementDataLocalNameKey: "healthDevice",
-//            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!,rssiTableServiceUUID!]
-//            CBAdvertisementDataServiceUUIDsKey: [hrService!]
-            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!]
-        ])
-        
-        
-        
-        
-        //Below works
-//        peripheralManager.add(hrService!)
-//        peripheralManager.startAdvertising([
-//            CBAdvertisementDataLocalNameKey: "healthDevice",
-//            CBAdvertisementDataServiceUUIDsKey: [hrServiceUUID!]
-//            ])
-    }
-    private func stopAdvertising() {
-        self.peripheralManager.removeAllServices()
-        peripheralManager.stopAdvertising()
-        heartRateLabel.text = "---"
-    }
-    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        if peripheral.state == .poweredOn {
-            print("Powered On")
-        } else if peripheral.state == .poweredOff {
-            print("Powered Off")
-        }else {
-            print("Unhandled state")
-        }
-    }
-    //////////////////////////////////////////////////////////////////////////////////////////////////
     @IBOutlet weak var startButton: UIButton!
     @IBOutlet weak var heartRateLabel: UILabel!
     var cbRegion : CLBeaconRegion?
@@ -394,55 +287,59 @@ class ViewController: UIViewController, WCSessionDelegate, CBPeripheralManagerDe
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //Required for WatchConnectivity
-        self.trainingLabel.text = self.rssiTableColumns.first!
         if(WCSession.isSupported()) {
             session = WCSession.default
             session?.delegate = self
             session?.activate()
         }
+        
+        // Options of locations to choose from
+        self.locationPicker.delegate = self
+        self.locationPicker.dataSource = self
+        //Select the first
+        self.locationPicker.selectRow(0, inComponent: 0, animated: false)
+
+        
         //Required for Beacon
-        print("Ok 1")
         locationManager.requestAlwaysAuthorization()
-        print("Ok 2")
         locationManager.requestWhenInUseAuthorization()
         
         while CLLocationManager.authorizationStatus() == .denied {
             locationManager.requestAlwaysAuthorization()
             locationManager.requestWhenInUseAuthorization()
         }
-        
-        initPeripheral()
         //Start Central Manager
         centralManager = CBCentralManager (delegate: self, queue: nil)
-        /*
-        tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: rssiTableRows.count-1, section: 0)],with: .automatic)
-        tableView.endUpdates()
-        tableView.reloadData()
-        */
         
     }
     
-    
+    /**
+        Start/Stop the application.
+        Start/Stop scanning for peripherals
+     */
     @IBAction func startButtonAction(_ sender: UIButton) {
-        if peripheralManager.isAdvertising {
-            stopAdvertising()
-            print("Stopped Advertising")
+        if centralManager.isScanning {
             sender.setTitle("Start Service", for: .normal)
             centralManager.stopScan()
+            socket.closeClient()
         }else {
-            startAdvertising()
-            print("Started Advertising")
+            socket.setHostIP(hostIP: ipAddressTextField.text!)
+            let textPort = portTextField.text!
+            socket.setHostPort(hostPort: Int32(textPort)!)
             sender.setTitle("Stop Service", for: .normal)
-            //centralManager.scanForPeripherals(withServices: nil, options: nil)
             let scanOpts = [CBCentralManagerScanOptionAllowDuplicatesKey: NSNumber(value: true)]
             centralManager.scanForPeripherals(withServices: nil, options: scanOpts)
         }
-        //print("centralManager State: \(centralManager.state)")
     }
-    
-
-    
-
 }
-
+/*
+This Code is From Lou Zell Answer
+https://stackoverflow.com/questions/39677330/how-does-string-substring-work-in-swift
+*/
+extension String {
+    subscript(_ range: CountableRange<Int>) -> String {
+        let idx1 = index(startIndex, offsetBy: max(0, range.lowerBound))
+        let idx2 = index(startIndex, offsetBy: min(self.count, range.upperBound))
+        return String(self[idx1..<idx2])
+    }
+}
